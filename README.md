@@ -78,14 +78,13 @@ It costs about 1/3rd of what a Raspberry Pi does while coming with 2GB of memory
 
 ## External Docs
 
-Le Potato Specs:
-https://www.libre.computer/products/aml-s905x-cc/
+[Le Potato Specs](https://www.libre.computer/products/aml-s905x-cc/)
 
-GPIO Getting Started:
-https://docs.google.com/presentation/d/1u4Z7c7he3sVfFC5laRgGkQSrsFML22xEOw6-r-VxeQM/edit#slide=id.g3b43f356f0_9_0
+[GPIO Getting Started](https://docs.google.com/presentation/d/1u4Z7c7he3sVfFC5laRgGkQSrsFML22xEOw6-r-VxeQM/edit#slide=id.g3b43f356f0_9_0)
 
-GPIO Headers:
-https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit#gid=0
+[GPIO Headers](https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit#gid=0)
+
+# More "Concept Art"
 
 ![proto2](docs/proto_lol/proto2.jpeg)
 ![proto3](docs/proto_lol/proto3.jpeg)
