@@ -86,7 +86,7 @@ It costs about 1/3rd of what a Raspberry Pi does while coming with 2GB of memory
 
 # More "Concept Art"
 
-![proto2](docs/proto_lol/proto2.jpeg)
+![proto1](docs/proto_lol/proto1.jpeg)
 ![proto3](docs/proto_lol/proto3.jpeg)
 
 (These are also not what it looks like)
