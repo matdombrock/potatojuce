@@ -22,6 +22,8 @@ Running *should* be as easy as:
 
 ## Juce Lib Included?
 This is because its not easy to get Projucer running on ARM and its easier to do it this way than to to depend on Projucer to setup the project correctly. 
+# Le Potato
+![docs/board_img.png](board image)
 
 ## External Docs
 
