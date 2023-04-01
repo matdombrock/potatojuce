@@ -1,8 +1,8 @@
 # POTATO JUCE:
 
-![proto1](docs/proto_lol/proto1.jpeg)
 ![proto2](docs/proto_lol/proto2.jpeg)
-![proto3](docs/proto_lol/proto3.jpeg)
+
+(This is not what it looks like.)
 
 ## Setup:
 ```
@@ -86,3 +86,8 @@ https://docs.google.com/presentation/d/1u4Z7c7he3sVfFC5laRgGkQSrsFML22xEOw6-r-Vx
 
 GPIO Headers:
 https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit#gid=0
+
+![proto3](docs/proto_lol/proto3.jpeg)
+![proto3](docs/proto_lol/proto3.jpeg)
+
+(These are also not what it looks like)
