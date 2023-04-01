@@ -1,5 +1,9 @@
 # POTATO JUCE:
 
+![proto1](docs/proto_lol/proto1.jpeg)
+![proto2](docs/proto_lol/proto2.jpeg)
+![proto3](docs/proto_lol/proto3.jpeg)
+
 ## Setup:
 ```
 ./pi-deps.sh
