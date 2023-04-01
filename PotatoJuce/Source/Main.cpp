@@ -1,53 +1,34 @@
-/*
-  ==============================================================================
-
-    This file contains the basic startup code for a JUCE application.
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 
 /////
 using namespace juce;
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-    String fileLoc = "/home/mathieu/test.wav";
-    DBG("Attempting to play file at: ");
-    DBG(fileLoc);
-    File input (fileLoc);
-    AudioFormatManager fmgr;
-    fmgr.registerBasicFormats();
-    ScopedPointer<AudioFormatReaderSource> source =
-        new AudioFormatReaderSource (fmgr.createReaderFor(input), true);
-
-    AudioDeviceManager devmgr;
-    devmgr.initialiseWithDefaultDevices (0, 2);
-    AudioIODevice* device = devmgr.getCurrentAudioDevice();
-    if (device && source) {
-        source->prepareToPlay (device->getDefaultBufferSize(),
-                               device->getCurrentSampleRate());
-        ScopedPointer<AudioSourcePlayer> player = new AudioSourcePlayer ();
-        player->setSource (source);
-        devmgr.addAudioCallback (player);
-        while (source->getNextReadPosition() < source->getTotalLength())
-            Thread::sleep(100);
-        return 0;
-    }
-    else{
-    	DBG("ERROR: Cant play file");
-    }
-    return -1;
-}
-
-
-//==============================================================================
-int mainx (int argc, char* argv[])
-{
-
-    // ..your code goes here!
-
-
-    return 0;
+	ScopedJuceInitialiser_GUI gui_init;
+	AudioDeviceManager aman;
+	String err = aman.initialiseWithDefaultDevices(0, 2);
+	if (err.isEmpty())
+	{
+		std::cout << "device opened : " << aman.getCurrentAudioDevice()->getName() << "\n";
+		ToneGeneratorAudioSource tonesource; // Juce provided AudioSource based sine generator
+		tonesource.setFrequency(440.0);
+		tonesource.setAmplitude(0.1);
+		AudioSourcePlayer asplayer; // wraps the tone generator so it can be used as an AudioIODeviceCallback
+		asplayer.setSource(&tonesource);
+		aman.addAudioCallback(&asplayer);
+		while (true)
+		{
+			double freq = 0.0;
+			std::cin >> freq;
+			if (freq > 0.0)
+				tonesource.setFrequency(freq);
+			else
+				break;
+		}
+		std::cout << "closing device...\n";
+	}
+	else
+		std::cout << "could not open device : " << err << "\n";
+	return 0;
 }
