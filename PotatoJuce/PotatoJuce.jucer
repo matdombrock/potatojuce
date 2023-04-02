@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="ATolQS" name="PotatoJuce">
     <GROUP id="{1466B4DB-B2AA-E6DD-2AB2-DBE6F4CFEB94}" name="Source">
+      <GROUP id="{0A31C3D8-EC3D-B1A3-641B-E112BBED17D3}" name="Core">
+        <FILE id="W23tlS" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
+        <FILE id="zlt819" name="Util.h" compile="0" resource="0" file="Source/Util.h"/>
+      </GROUP>
       <FILE id="C2tpmO" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
   </MAINGROUP>
