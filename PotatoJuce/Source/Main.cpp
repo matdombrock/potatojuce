@@ -1,5 +1,5 @@
 #include <JuceHeader.h>
-#include "./PAudioProcessor.h"
+#include "PAudioProcessor.h"
 
 /////
 using namespace juce;

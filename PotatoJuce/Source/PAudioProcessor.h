@@ -10,12 +10,13 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "./PSynth.h"
+#include "PSynth.h"
+#include "PWave_WhiteNoise.h"
 
 class PAudioProcessor{
 public:
   PAudioProcessor(){
-    
+    DBG("AudioProcessor Init");
   }
 
   void prepareToPlay(){
@@ -28,19 +29,28 @@ public:
     std::cout << "Device opened: " << adm.getCurrentAudioDevice()->getName() << "\n";
     asp.setSource(&synth);
     adm.addAudioCallback(&asp);
+    DBG("AudioProcessor Prepared");
   }
+
   void mainLoop(){
     prepareToPlay();
+    // Setup the synth
+    synth.setWaveEngine("demo");
+    float pVals[4];
+    float frequency = 440.0;
+    synth.setFrequency(frequency);
+    // Runs with CLI input
     while (true)
     {
-      float amp = 0.0;
-      std::cin >> amp;// Get input from CLI
-      if (amp > 0.0){
-        juce::jmin(amp, 1.0f);
-        synth.setAmplitude(amp);
+      // freq p0 p1 p2 p3
+      DBG("Usage: freq p0 p1 p2 p3");
+      std::cin >> frequency;// Get input from CLI
+      synth.setFrequency(frequency);
+      for(int i = 0; i < 4; i++){
+        std::cin >> pVals[i];// Get input from CLI
+        juce::jmin(pVals[i], 1.0f);
+        synth.setParam(i,pVals[i]);
       }
-      else
-        break;
     }
     std::cout << "Closing device...\n";
   }
