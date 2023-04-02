@@ -32,7 +32,7 @@ The “Le Potato” single board computer available from Libre Computers is an a
 
 It costs about 1/3rd of what a Raspberry Pi does while coming with 2GB of memory. It’s also widely available as well (unlike the pi).
 
-![Board Image](docs/board_img.png)
+![Board Image](docs/libre_rips/board_img.png)
 
 - Green - GPIO (General)
 - Red - 5v
@@ -74,7 +74,7 @@ It costs about 1/3rd of what a Raspberry Pi does while coming with 2GB of memory
     - Audio Headers (I2S, ADC, SPDIF)
     - UART Header
 
-![image](docs/board_img2.png)
+![image](docs/libre_rips/board_img2.png)
 
 ## External Docs
 
