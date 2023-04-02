@@ -17,7 +17,7 @@ public:
   PAudioProcessor(){
     
   }
-  
+
   void prepareToPlay(){
     juce::String err = adm.initialiseWithDefaultDevices(0, 2);
     if (!err.isEmpty())
@@ -27,8 +27,7 @@ public:
     }
     std::cout << "Device opened: " << adm.getCurrentAudioDevice()->getName() << "\n";
     asp.setSource(&synth);
-    adm.
-    addAudioCallback(&asp);
+    adm.addAudioCallback(&asp);
   }
   void mainLoop(){
     prepareToPlay();
