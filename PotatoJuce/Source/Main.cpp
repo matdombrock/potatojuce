@@ -3,17 +3,37 @@
 /////
 using namespace juce;
 
+/*
+	Utility Functions
+*/
+
+float whiteNoise(){
+	Random random;
+	return random.nextFloat() * 2.0f - 1.0f; // Generate random values between -1 and 1
+}
+
+/*
+	The base synth class which other synths will inheret
+*/
 class Synth : public AudioSource {
+public:
+	Synth(){
+
+	}
+	/*  
+		Overrides
+	*/
 	void getNextAudioBlock(const AudioSourceChannelInfo & bufferToFill) override
 	{
-	   Random random;
-	   // Fill the buffer with white noise
+		// Fill the buffer with white noise
    		for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); ++channel)
    		{
    		    float* channelData = bufferToFill.buffer->getWritePointer (channel, bufferToFill.startSample);
    		    for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
    		    {
-   		        channelData[sample] = random.nextFloat() * 2.0f - 1.0f; // Generate random values between -1 and 1
+				float sampleVal = whiteNoise();
+				sampleVal *= amplitude;
+				channelData[sample] = sampleVal; 
    		    }
    		} 
 
@@ -25,10 +45,20 @@ class Synth : public AudioSource {
 	void releaseResources() override
 	{
 
-	}	
+	}
+	/*
+		Custom methods
+	*/	
+	void setAmplitude(float newAmp){
+		amplitude = newAmp;
+	}
+private:
+	float amplitude = 0.5;
 };
 
-
+/*
+	Main Entry Point
+*/
 int main(int argc, char* argv[])
 {
 	ScopedJuceInitialiser_GUI gui_init;// This does not actually init GUI
@@ -46,11 +76,12 @@ int main(int argc, char* argv[])
 	adm.addAudioCallback(&asp);
 	while (true)
 	{
-		double freq = 0.0;
-		std::cin >> freq;// Get input from CLI
-		if (freq > 0.0)
-			//tonesource.setFrequency(freq);
-			DBG("White Noise...");
+		float amp = 0.0;
+		std::cin >> amp;// Get input from CLI
+		if (amp > 0.0){
+			jmin(amp, 1.0f);
+			synth.setAmplitude(amp);
+		}
 		else
 			break;
 	}
