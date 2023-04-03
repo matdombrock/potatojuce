@@ -31,15 +31,6 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
-    // Will lock process :(
-    void pwm(){
-        int i = 0;
-        while (true) {
-            set((i & 1) != 0);
-            usleep(100000);
-            i++;
-        }
-    }
 private:
     const char *chipName;
     struct gpiod_chip *chip;
