@@ -61,11 +61,12 @@ int main() {
             }
             else if(num > 1){
                 pwm = num;
-                std::cout << "PWM " << line << std::endl;
+                std::cout << "PWM " << line << " microseconds" << std::endl;
                 continue;
             }
             else{
                 pwm = 0;
+                std::cout << "Set " << line << std::endl;
                 led.set((bool)num);
             }
         }
