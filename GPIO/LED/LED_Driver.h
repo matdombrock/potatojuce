@@ -36,16 +36,16 @@ public:
         lineNum = newLineNum;
     }
     void open(){
+        log("Opening LED GPIO");
         // Open GPIO chip
         chip = gpiod_chip_open_by_name(chipName);
-
         // Open GPIO lines
         lineLED = gpiod_chip_get_line(chip, lineNum);
-
         // Open LED lines for output
         gpiod_line_request_output(lineLED, "example1", 0);
     }
     void release(){
+        log("Releasing LED GPIO");
         // Release lines and chip
         gpiod_line_release(lineLED);
         gpiod_chip_close(chip);
@@ -54,7 +54,7 @@ public:
         gpiod_line_set_value(lineLED, val);
     }
     int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
-        std::cout << "Starting LED IPC Watcher @ " << newFifoPath << std::endl;
+        log("Starting LED IPC Watcher @ " + newFifoPath);
         open();
         std::string fifoPath = newFifoPath;
         std::ifstream fifo(fifoPath);
@@ -98,6 +98,13 @@ public:
         return 0;
     }
 private:
+    void log(std::string msg){
+        std::cout << "---------------------------" << std::endl;
+        std::cout << msg << std::endl;
+        std::cout << "Chip Name: " << chipName << std::endl;
+        std::cout << "Line Number: " << lineNum << std::endl;
+        std::cout << "---------------------------" << std::endl;
+    } 
     const char *chipName;
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;

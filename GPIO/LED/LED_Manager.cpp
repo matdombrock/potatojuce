@@ -11,9 +11,6 @@ int main(int argc, char **argv)
 {
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
-  std::cout << "Chip Name: " << chipName << std::endl;
-  std::cout << "Line Number: " << lineNum << std::endl;
-  std::cout << "---------------------------" << std::endl;
   LED led(chipName, lineNum);
   // First do
   // $ mkfio /tmp/led_fifo
