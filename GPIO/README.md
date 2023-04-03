@@ -104,6 +104,9 @@ gpioset gpiochip1 91=1
 ### `libgpiod` C++ Bindings:
 [Official Docs](https://libgpiod.readthedocs.io/en/latest/group__gpiod__cxx.html)
 
+### `gpiod.h` Source Code:
+[GitHub Source](https://github.com/brgl/libgpiod/blob/master/include/gpiod.h)
+
 ### Exploring `libgpiod`:
 https://www.ics.com/blog/gpio-programming-exploring-libgpiod-library
 

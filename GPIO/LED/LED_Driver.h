@@ -31,6 +31,7 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
+    // Will lock process :(
     void pwm(){
         int i = 0;
         while (true) {
