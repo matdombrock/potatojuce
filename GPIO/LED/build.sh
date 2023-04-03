@@ -1,3 +1,4 @@
 #! /bin/bash
+TARGET="LED_Manager"
 clear
-g++ LED_Manager.cpp -lgpiod -o man.out
+g++ $TARGET.cpp -lgpiod -o $TARGET.out
