@@ -1,3 +1,3 @@
 #! /bin/bash
 clear
-g++ test.cpp -lgpiod -o test
+g++ test.cpp -lgpiod -o test.out
