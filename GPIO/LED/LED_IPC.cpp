@@ -45,12 +45,16 @@ int main() {
     }
 
     std::string line;
-    while (getline_async(fifo, line)) {
-        int num;
-        num = std::stoi(line);
-        std::cout << "Received message: " << line << std::endl;
-        led.set((bool)num);
+    while(true){
+        while (getline_async(fifo, line)) {
+            int num;
+            num = std::stoi(line);
+            std::cout << "Received message: " << line << std::endl;
+            led.set((bool)num);
+        }
+        std::cout << "loop\n";
     }
+    
     led.release();
     fifo.close();
     return 0;
