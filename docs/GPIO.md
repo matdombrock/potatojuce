@@ -101,3 +101,45 @@ gpioset gpiochip1 91=1
 ## Controlling GPIO via C++/Python
 The Libre Computer dev has written a tutorial on this:
 [tutorial link](https://hub.libre.computer/t/how-to-control-gpio-via-python-3/601)
+
+### General Control
+> libgpiod is the preferred C interface to interact with the Linux kernel’s GPIO subsystem. Every one of our boards feature GPIOs that can be controlled through this interface. It is well supported, stable, reliable, and well designed.
+> 
+> GPIOs are organized into banks. These banks can be different voltages. The Linux pinctrl subsystem controls the operations of these GPIO banks. The Linux pinctrl subsystem organizes and exposes these banks to userspace as /dev/gpiochipX where a gpiochip can be a composite of multiple banks and individual GPIOs as lines.
+> 
+> Our libretech-wiring-tool offers a handy utility called lgpio. It allows you to quickly lookup the chip and line number of a specific pin on a specific header.
+
+```
+lgpio info HEADER PIN
+```
+
+> Most of our boards feature a primary header so you can also leave out the header if you are looking up with pin number on the primary header.
+
+```
+lgpio info PIN
+```
+
+> For example, we can lookup pin 3 on AML-S905X-CC Le Potato:
+```
+$ lgpio info 3
+Chip    Line    sysfs   Name    Pad     Ref     Desc
+0       5       506     GPIOAO_5        D13     I2C_SDA_AO      I2C_SDA_AO // I2C_SLAVE_SDA_AO // UART_RX_AO_B
+```
+
+> This provides us with all the fields of that pin. The fields are described as follows:
+```
+    Chip - the gpio chip number for libgpiod - /dev/gpiochipX
+    Line - the gpio line number on the chip for libgpiod
+    sysfs - the legacy gpio number for the deprecated sysfs interface - /sys/class/gpio
+    Name - SoC GPIO name
+    Pad - SoC physical pad
+    Ref - Schematic Reference Name
+    Desc - Pin Multiplex Functions
+```
+
+> If all we care about is controlling the GPIOs via libgpiod, we can run the following to give us the chip and line numbers respectively:
+
+```
+$ lgpio info 3 gpiod
+0       5
+```
