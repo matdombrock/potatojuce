@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include "LED_Driver.h"
 
-bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
-
+// Source: https://stackoverflow.com/a/57809972
+bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
     static std::string lineSoFar;
     char inChar;
     int charsRead = 0;
@@ -72,7 +72,7 @@ int main() {
         if(pwm){
             led.set((i & 1) != 0);
             i++;
-            usleep(pwm*1000);
+            usleep(pwm);//microseconds
         }
     }
     
