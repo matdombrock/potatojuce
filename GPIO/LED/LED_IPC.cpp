@@ -1,3 +1,5 @@
+// The LED_Driver IPC Manager
+// IPC via FIFO pipe at /tmp/led_fifo
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,6 +10,7 @@ int main() {
     LED led(chipName, 98);
     led.open();
 
+    // $ mkfio /tmp/led_fifo
     std::string fifo_path = "/tmp/led_fifo"; // replace with your FIFO path
     std::ifstream fifo(fifo_path);
 
