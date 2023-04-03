@@ -53,7 +53,7 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
-    int startIPCWatcher(char *newFifoPath="/tmp/led_fifo"){
+    int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
         open();
         std::string fifoPath = newFifoPath;
         std::ifstream fifo(fifoPath);

@@ -17,6 +17,6 @@ int main(int argc, char **argv)
   LED led(chipName, lineNum);
   // First do
   // $ mkfio /tmp/led_fifo
-  led.startIPCWatcher("mkfio /tmp/led_fifo");
+  led.startIPCWatcher("/tmp/led_fifo");
   return 0;
 }
