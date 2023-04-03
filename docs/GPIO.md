@@ -1,67 +1,99 @@
-[Original Slideshow](https://docs.google.com/presentation/d/1u4Z7c7he3sVfFC5laRgGkQSrsFML22xEOw6-r-VxeQM/edit#slide=id.g4039ec07dc_0_0)
+# GPIO
+[Source](https://developer.technexion.com/docs/using-gpio-from-a-linux-shell)
+## Overview
+![Board Image](libre_rips/board_img.png)
 
-# Le Potato GPIO
+- Green - GPIO (General)
+- Red - 5v
+- Orange - 3.3v
+- Blue - ADC
+- Dark - Ground
 
-## GPIO Info
-- GPIO stands for General Purpose Input Output
-- GPIO pins are digital pins (can be 0 or 1) capable of input or output
-- GPIO input involves sensing the voltage level and using it to represent 0 or 1
-- GPIO output involves setting the voltage level and using it to represent 0 or 1
-- GPIO are not to be confused with analog input or output
-- They cannot represent a number in a range (other than 0 or 1) or a decimal number (eg 0.5)
-- For the 40-pin header found on Libre Computer Boards, all GPIOs are 3.3V logic level meaning that they use 3.3V or - 0V to represent digital 1 or 0 respectively. It is the same voltage as Raspberry Pi but different than some Arduino - boards. Some Arduinos use 5V logic level and connecting such systems to 3.3V logic level systems will damage the them due to overvoltage.
+## CLI Usage
 
-## GPIO Limitations
-- GPIOs are generally used to signal or to light LEDs.
-- GPIOs provide only a few milli-amps of current so they cannot drive motors.
-- GPIOs have limited signaling/frequency throughput depending on what software interface is used.
-    - Userspace software using file interface can operate on the n-KHz frequency
-    - Userspace software using ioctl or registers can operate on the nn-KHz to nnn-KHz frequency
-    - Kernel driver can usually can operate on the n-MHz frequency
-    - Kernel driver with accelerated fixed function hardware on specific pins can operate on the nn-MHz frequency
-- GPIO signaling/frequency will be further limited if current requirement is high.
-    - Large LEDs and devices that require more current will slow voltage rise/fall times since more electrons need to be delivered to bring voltage levels up to 3.3V or down to 0V. Capacitance.
-
-## GPIO: Controlling Direction and Level
-[AML-S905x-CC-v1.0A Headers Reference](https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit?usp=sharing)
-
-All GPIO pins output either 3.3V or 0V with very limited current. Signaling and powering LEDs are the typical use-cases. Do not try to drive high current devices such as DC motors. Use transistors when working with devices that require more than 10mA!
-
-There are two interfaces for controlling GPIO pins in Linux.
-1) File operations on /sys/class/gpio
-    - being deprecated in a few years
-2) Ioctl operations on /dev/gpiochip
-    - requires utilities like gpiod (gpioget/gpioset) unless your programming language supports ioctl
-
-## GPIO: Controlling Direction and Level via gpiod (ioctl)
-This is the preferred method of operating GPIO pins.
+### Install `gpiod`
 ```
-sudo apt-get install gpiod
+sudo apt install gpiod
 ```
 
+## Detect GPIO Chips
 ```
-gpioget $GPIOCHIP $GPIONUM
-gpioset $GPIOCHIP $GPIONUM=0
-```
-
-Replace $GPIOCHIP and $GPIONUM with the GPIO chip and unquoted Linux GPIO # from the headers reference.
-
-## GPIO: Controlling Direction and Level via file ops
-This method is deprecated and will not be supported by Linux long term. Make sure you are root (sudo su)
-
-1) Setting a GPIO
-```
-echo -n $GPIONUM > /sys/class/gpio/export
-echo -n out > /sys/class/gpio/gpio$GPIONUM/direction
-echo -n 0 > /sys/class/gpio/gpio$GPIONUM/value
-echo -n $GPIONUM > /sys/class/gpio/unexport
-```
-2) Reading a GPIO
-```
-echo -n $GPIONUM > /sys/class/gpio/export
-echo -n in > /sys/class/gpio/gpio$GPIONUM/direction
-cat /sys/class/gpio/gpio$GPIONUM/value
-echo -n $GPIONUM > /sys/class/gpio/unexport
+gpiodetect
 ```
 
-Replace $GPIONUM with the quoted Linux GPIO # from the headers reference since many GPIOs are controlled by chip1 which is offset by 10.
+Example:
+```
+$ gpiodetect
+gpiochip0 [aobus-banks] (11 lines)
+gpiochip1 [periphs-banks] (100 lines)
+```
+
+## List Lines
+```
+gpioinfo
+```
+
+Example:
+```
+$ gpioinfo
+gpiochip0 - 11 lines:
+	line   0:    "UART TX"       unused   input  active-high 
+	line   1:    "UART RX"       unused   input  active-high 
+	line   2:   "Blue LED" "librecomputer:blue" output active-high [used]
+	line   3: "SDCard Voltage Switch" "VCC_CARD" output active-high [used]
+	line   4: "7J1 Header Pin5" unused input active-high 
+	line   5: "7J1 Header Pin3" unused input active-high 
+	line   6: "7J1 Header Pin12" unused input active-high 
+	line   7:      "IR In"       unused   input  active-high 
+	line   8: "9J3 Switch HDMI CEC/7J1 Header " unused input active-high 
+	line   9: "7J1 Header Pin13" unused input active-high 
+	line  10: "7J1 Header Pin15" unused output active-high 
+gpiochip1 - 100 lines:
+	line   0:      unnamed       unused   input  active-high 
+	line   1:      unnamed       unused   input  active-high 
+	line   2:      unnamed       unused   input  active-high 
+	line   3:      unnamed       unused   input  active-high 
+	line   4:      unnamed       unused   input  active-high
+    ...
+```
+
+You can reference the [official doc](https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit#gid=0) to find the pin you want to use and then use a `grep` to find the line you want. 
+
+For example, if we want to find **Pin8** from that doc we could do this:
+```
+$ gpioinfo | grep Pin8
+	line  91: "7J1 Header Pin8" unused output active-high 
+```
+
+That lets us know that the line number for that pin is **91**. 
+
+### Get Pins
+```
+gpioget <chipNumber> <lineNumber>
+```
+
+Example:
+```
+gpioget gpiochip1 91
+```
+
+You can also omit the `gpiochip` part:
+```
+gpioget 1 91
+```
+
+### Set Pins
+```
+gpioset <chipNumber> <lineNumber>=<bool>
+```
+
+Example:
+```
+## Set the pin off
+gpioset gpiochip1 91=0
+
+## Set the pin on
+gpioset gpiochip1 91=1
+```
+
+*Note: The `gpiochip` prfix can be omitted here as well. 
