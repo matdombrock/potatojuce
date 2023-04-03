@@ -22,7 +22,6 @@ int main(int argc, char **argv)
   i = 0;
   while (true) {
     gpiod_line_set_value(lineLED, (i & 1) != 0);
-
     usleep(100000);
     i++;
   }
