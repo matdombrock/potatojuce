@@ -6,28 +6,6 @@
 #include <string>
 #include <unistd.h>
 
-// Source: https://stackoverflow.com/a/57809972
-bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
-    static std::string lineSoFar;
-    char inChar;
-    int charsRead = 0;
-    bool lineRead = false;
-    str = "";
-    do {
-        charsRead = is.readsome(&inChar, 1);
-        if (charsRead == 1) {
-            // if the delimiter is read then return the string so far
-            if (inChar == delim) {
-                str = lineSoFar;
-                lineSoFar = "";
-                lineRead = true;
-            } else {  // otherwise add it to the string so far
-                lineSoFar.append(1, inChar);
-            }
-        }
-    } while (charsRead != 0 && !lineRead);
-    return lineRead;
-}
 
 class GPIO{
 public:
@@ -53,52 +31,6 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
-    // Todo: Move this back to manager
-    int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
-        log("Starting IPC Watcher @ " + newFifoPath);
-        open();
-        std::string fifoPath = newFifoPath;
-        std::ifstream fifo(fifoPath);
-        if (!fifo.is_open()) {
-            std::cerr << "Failed to open FIFO: " << fifoPath << std::endl;
-            return 1;
-        }
-        std::string line;
-        bool run = true;
-        int pwm = 0;
-        int i;
-        while(run){
-            while (getline_async(fifo, line)) {
-                std::cout << "Received message: " << line << std::endl;
-                int num;
-                num = std::stoi(line);
-                if(num < 0){
-                    run = false;
-                    std::cout << "Break " << line << std::endl;
-                    continue;
-                }
-                else if(num > 1){
-                    pwm = num;
-                    std::cout << "PWM " << line << " microseconds" << std::endl;
-                    continue;
-                }
-                else{
-                    pwm = 0;
-                    std::cout << "Set " << line << std::endl;
-                    set((bool)num);
-                }
-            }
-            if(pwm){
-                set((i & 1) != 0);
-                i++;
-                usleep(pwm);//microseconds
-            }
-        }
-        release();
-        fifo.close();
-        return 0;
-    }
-private:
     void log(std::string msg){
         std::cout << "---------------------------" << std::endl;
         std::cout << msg << std::endl;
@@ -106,6 +38,7 @@ private:
         std::cout << "Line Number: " << lineNum << std::endl;
         std::cout << "---------------------------" << std::endl;
     } 
+private:
     const char *chipName;
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
