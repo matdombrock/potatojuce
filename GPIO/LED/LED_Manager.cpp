@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
-  for(int ledIndex = 0; ledIndex > 2; ledIndex++){
+  for(int ledIndex = 0; ledIndex < 2; ledIndex++){
     led[ledIndex].startIPCWatcher("/tmp/led"+std::to_string(ledIndex)+"_fifo");
   }
   return 0;
