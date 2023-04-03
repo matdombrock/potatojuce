@@ -35,7 +35,16 @@ public:
         std::lock_guard<std::mutex> lock(queueMutex);
         messageQueue.push(message);
     }
-    void pwm(){
+    void X(){
+        std::thread messageThread(pwm);
+
+        // Inject messages into the loop
+        sendMessage("Hello");
+        sendMessage("World");
+
+        messageThread.join();
+    }
+    static void pwm(){
         int i = 0;
         while (true) {
             std::lock_guard<std::mutex> lock(queueMutex);
@@ -55,6 +64,6 @@ private:
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
     int lineNum = 0;
-    std::queue<std::string> messageQueue;
-    std::mutex queueMutex;
+    static std::queue<std::string> messageQueue;
+    static std::mutex queueMutex;
 };

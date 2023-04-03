@@ -11,13 +11,7 @@ int main(int argc, char **argv)
 //     usleep(100000);
 //     i++;
 //   }
-   std::thread messageThread(led.pwm);
-
-        // Inject messages into the loop
-        sendMessage("Hello");
-        sendMessage("World");
-
-        messageThread.join();
+    led.X();
   led.release();
   return 0;
 }
