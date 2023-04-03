@@ -55,7 +55,7 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
-    void startIPCWatcher(){
+    int startIPCWatcher(){
         open();
         // $ mkfio /tmp/led_fifo
         std::string fifo_path = "/tmp/led_fifo"; // replace with your FIFO path
@@ -90,13 +90,14 @@ public:
                 }
             }
             if(pwm){
-                led.set((i & 1) != 0);
+                set((i & 1) != 0);
                 i++;
                 usleep(pwm);//microseconds
             }
         }
-        led.release();
+        release();
         fifo.close();
+        return 0;
     }
 private:
     const char *chipName;
