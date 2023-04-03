@@ -35,15 +35,6 @@ public:
         std::lock_guard<std::mutex> lock(queueMutex);
         messageQueue.push(message);
     }
-    void X(){
-        std::thread messageThread(pwm);
-
-        // Inject messages into the loop
-        sendMessage("Hello");
-        sendMessage("World");
-
-        messageThread.join();
-    }
     void pwm(){
         int i = 0;
         while (true) {
