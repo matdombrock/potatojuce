@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstring>
 #include <unistd.h>
 #include "LED_Driver.h"
 
@@ -53,16 +52,16 @@ int main() {
     while(run){
         while (getline_async(fifo, line)) {
             std::cout << "Received message: " << line << std::endl;
-            if(strcmp(line, "break")){
+            int num;
+            num = std::stoi(line);
+            if(num < 0){
                 run = false;
                 continue;
             }
-            if(strcmp(line, "blink")){
+            if(num == 2){
                 blink = !blink;
                 continue;
             }
-            int num;
-            num = std::stoi(line);
             led.set((bool)num);
         }
         if(blink){
