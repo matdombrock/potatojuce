@@ -13,7 +13,6 @@ bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
     int charsRead = 0;
     bool lineRead = false;
     str = "";
-
     do {
         charsRead = is.readsome(&inChar, 1);
         if (charsRead == 1) {
@@ -27,7 +26,6 @@ bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
             }
         }
     } while (charsRead != 0 && !lineRead);
-
     return lineRead;
 }
 
@@ -55,13 +53,12 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
-    int startIPCWatcher(){
+    int startIPCWatcher(char *newFifoPath="/tmp/led_fifo"){
         open();
-        // $ mkfio /tmp/led_fifo
-        std::string fifo_path = "/tmp/led_fifo"; // replace with your FIFO path
-        std::ifstream fifo(fifo_path);
+        std::string fifoPath = newFifoPath;
+        std::ifstream fifo(fifoPath);
         if (!fifo.is_open()) {
-            std::cerr << "Failed to open FIFO: " << fifo_path << std::endl;
+            std::cerr << "Failed to open FIFO: " << fifoPath << std::endl;
             return 1;
         }
         std::string line;
