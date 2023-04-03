@@ -29,14 +29,14 @@ bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
     return lineRead;
 }
 
-class LED{
+class GPIO{
 public:
-    LED(const char* newChipName, int newLineNum){
+    GPIO(const char* newChipName, int newLineNum){
         chipName = newChipName;
         lineNum = newLineNum;
     }
     void open(){
-        log("Opening LED GPIO");
+        log("Opening GPIO");
         // Open GPIO chip
         chip = gpiod_chip_open_by_name(chipName);
         // Open GPIO lines
@@ -45,7 +45,7 @@ public:
         gpiod_line_request_output(lineLED, "example1", 0);
     }
     void release(){
-        log("Releasing LED GPIO");
+        log("Releasing GPIO");
         // Release lines and chip
         gpiod_line_release(lineLED);
         gpiod_chip_close(chip);
@@ -53,8 +53,9 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
+    // Todo: Move this back to manager
     int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
-        log("Starting LED IPC Watcher @ " + newFifoPath);
+        log("Starting IPC Watcher @ " + newFifoPath);
         open();
         std::string fifoPath = newFifoPath;
         std::ifstream fifo(fifoPath);

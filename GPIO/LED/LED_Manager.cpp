@@ -3,11 +3,11 @@
 // First do
 // $ mkfio /tmp/led_fifo
 
-#include "LED_Driver.h"
+#include "GPIO.h"
 #include <iostream>
 #include <map>
 
-LED led("gpiochip1", 91);// chip name, line number
+GPIO led("gpiochip1", 91);// chip name, line number
 
 int main(int argc, char **argv)
 {
