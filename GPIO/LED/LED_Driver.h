@@ -44,7 +44,7 @@ public:
 
         messageThread.join();
     }
-    void pwm(int usecs=1){
+    void pwm(){
         int i = 0;
         while (true) {
             std::lock_guard<std::mutex> lock(queueMutex);
@@ -53,7 +53,7 @@ public:
                 messageQueue.pop();
                 std::cout << "Received message: " << message << std::endl;
             }
-            led.set((i & 1) != 0);
+            set((i & 1) != 0);
             //usleep(100000);
             i++;
             std::this_thread::sleep_for(std::chrono::seconds(1));
