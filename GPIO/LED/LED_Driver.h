@@ -36,7 +36,7 @@ public:
         messageQueue.push(message);
     }
     void X(){
-        std::thread messageThread(processMessages);
+        std::thread messageThread(pwm);
 
         // Inject messages into the loop
         sendMessage("Hello");
