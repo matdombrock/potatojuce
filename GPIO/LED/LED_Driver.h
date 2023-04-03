@@ -54,6 +54,7 @@ public:
         gpiod_line_set_value(lineLED, val);
     }
     int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
+        std::cerr << "Starting LED IPC Watcher @ " << newFifoPath << std::endl;
         open();
         std::string fifoPath = newFifoPath;
         std::ifstream fifo(fifoPath);
