@@ -102,9 +102,12 @@ gpioset gpiochip1 91=1
 The Libre Computer dev has written a tutorial on this:
 [tutorial link](https://hub.libre.computer/t/how-to-control-gpio-via-python-3/601)
 
-### General Control
 > libgpiod is the preferred C interface to interact with the Linux kernel’s GPIO subsystem. Every one of our boards feature GPIOs that can be controlled through this interface. It is well supported, stable, reliable, and well designed.
-> 
+
+There are Python wrappers provided in the links above. 
+
+### Libre Computer Wiring Tool
+
 > GPIOs are organized into banks. These banks can be different voltages. The Linux pinctrl subsystem controls the operations of these GPIO banks. The Linux pinctrl subsystem organizes and exposes these banks to userspace as /dev/gpiochipX where a gpiochip can be a composite of multiple banks and individual GPIOs as lines.
 > 
 > Our libretech-wiring-tool offers a handy utility called lgpio. It allows you to quickly lookup the chip and line number of a specific pin on a specific header.
