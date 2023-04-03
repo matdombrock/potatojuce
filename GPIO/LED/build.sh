@@ -1,3 +1,3 @@
 #! /bin/bash
 clear
-g++ LED_IPC.cpp -lgpiod -o LED_IPC.out
+g++ LED_Driver.cpp -lgpiod -o LED_Driver.out
