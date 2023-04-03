@@ -23,7 +23,7 @@ int main() {
         std::cout << "Received message: " << line << std::endl;
         led.set((bool)num);
     }
-    led.close();
+    led.release();
     fifo.close();
     return 0;
 }
