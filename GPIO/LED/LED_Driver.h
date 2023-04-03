@@ -53,7 +53,7 @@ public:
                 messageQueue.pop();
                 std::cout << "Received message: " << message << std::endl;
             }
-            set((i & 1) != 0);
+            //set((i & 1) != 0);
             //usleep(100000);
             i++;
             std::this_thread::sleep_for(std::chrono::seconds(1));
