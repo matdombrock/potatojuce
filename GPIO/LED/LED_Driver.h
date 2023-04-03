@@ -43,6 +43,5 @@ private:
     const char *chipName;
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
-    int lineNum = 0;
-    
+    int lineNum = 0; 
 };
