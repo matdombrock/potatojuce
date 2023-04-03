@@ -96,4 +96,4 @@ gpioset gpiochip1 91=0
 gpioset gpiochip1 91=1
 ```
 
-*Note: The `gpiochip` prfix can be omitted here as well. 
+**Note: The `gpiochip` prefix can be omitted here as well.** 
