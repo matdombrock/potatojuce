@@ -46,17 +46,29 @@ int main() {
     }
 
     std::string line;
+    bool run = true;
+    bool blink = false;
     int i;
-    while(true){
+    while(run){
         while (getline_async(fifo, line)) {
+            std::cout << "Received message: " << line << std::endl;
+            if(std::strcmp(line, "break")){
+                run = false;
+                continue;
+            }
+            if(std::strcmp(line, "blink")){
+                blink = !blink;
+                continue;
+            }
             int num;
             num = std::stoi(line);
-            std::cout << "Received message: " << line << std::endl;
             led.set((bool)num);
         }
-        led.set((i & 1) != 0);
-        i++;
-        usleep(100000);
+        if(blink){
+            led.set((i & 1) != 0);
+            i++;
+            usleep(100000);
+        }
     }
     
     led.release();
