@@ -5,6 +5,31 @@
 #include <string>
 #include "LED_Driver.h"
 
+bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
+
+    static std::string lineSoFar;
+    char inChar;
+    int charsRead = 0;
+    bool lineRead = false;
+    str = "";
+
+    do {
+        charsRead = is.readsome(&inChar, 1);
+        if (charsRead == 1) {
+            // if the delimiter is read then return the string so far
+            if (inChar == delim) {
+                str = lineSoFar;
+                lineSoFar = "";
+                lineRead = true;
+            } else {  // otherwise add it to the string so far
+                lineSoFar.append(1, inChar);
+            }
+        }
+    } while (charsRead != 0 && !lineRead);
+
+    return lineRead;
+}
+
 int main() {
     const char* chipName = "gpiochip1";
     LED led(chipName, 98);
@@ -20,7 +45,7 @@ int main() {
     }
 
     std::string line;
-    while (std::getline(fifo, line)) {
+    while (getline_async(fifo, line)) {
         int num;
         num = std::stoi(line);
         std::cout << "Received message: " << line << std::endl;
