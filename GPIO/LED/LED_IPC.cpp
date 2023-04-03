@@ -47,7 +47,7 @@ int main() {
 
     std::string line;
     bool run = true;
-    bool blink = false;
+    int pwm = 0;
     int i;
     while(run){
         while (getline_async(fifo, line)) {
@@ -56,18 +56,23 @@ int main() {
             num = std::stoi(line);
             if(num < 0){
                 run = false;
+                std::cout << "Break " << line << std::endl;
                 continue;
             }
-            if(num == 2){
-                blink = !blink;
+            else if(num > 1){
+                pwm = num;
+                std::cout << "PWM " << line << std::endl;
                 continue;
             }
-            led.set((bool)num);
+            else{
+                pwm = 0;
+                led.set((bool)num);
+            }
         }
-        if(blink){
+        if(pwm){
             led.set((i & 1) != 0);
             i++;
-            usleep(100000);
+            usleep(pwm*1000);
         }
     }
     
