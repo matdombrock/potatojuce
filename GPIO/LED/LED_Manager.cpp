@@ -13,7 +13,7 @@ void sendMessage(const bool& message) {
 }
 
 void processMessages() {
-    LED led("gpiochip1");
+    LED led("gpiochip1", 98);
     while (true) {
         std::lock_guard<std::mutex> lock(queueMutex);
         while (!messageQueue.empty()) {
