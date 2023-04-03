@@ -1,6 +1,11 @@
 #include <gpiod.h>
 #include <stdio.h>
 #include <unistd.h>
+//
+#include <iostream>
+#include <queue>
+#include <mutex>
+#include <thread>
 
 class LED{
 public:
@@ -26,9 +31,39 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
+    void sendMessage(const std::string& message) {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        messageQueue.push(message);
+    }
+    void X(){
+        std::thread messageThread(processMessages);
+
+        // Inject messages into the loop
+        sendMessage("Hello");
+        sendMessage("World");
+
+        messageThread.join();
+    }
+    void pwm(int usecs=1){
+        int i = 0;
+        while (true) {
+            std::lock_guard<std::mutex> lock(queueMutex);
+            if (!messageQueue.empty()) {
+                std::string message = messageQueue.front();
+                messageQueue.pop();
+                std::cout << "Received message: " << message << std::endl;
+            }
+            led.set((i & 1) != 0);
+            //usleep(100000);
+            i++;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
 private:
     const char *chipName;
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
     int lineNum = 0;
+    std::queue<std::string> messageQueue;
+    std::mutex queueMutex;
 };
