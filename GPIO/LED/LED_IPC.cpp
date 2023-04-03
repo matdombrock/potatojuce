@@ -52,11 +52,11 @@ int main() {
     while(run){
         while (getline_async(fifo, line)) {
             std::cout << "Received message: " << line << std::endl;
-            if(std::strcmp(line, "break")){
+            if(strcmp(line, "break")){
                 run = false;
                 continue;
             }
-            if(std::strcmp(line, "blink")){
+            if(strcmp(line, "blink")){
                 blink = !blink;
                 continue;
             }
