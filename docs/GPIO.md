@@ -97,3 +97,7 @@ gpioset gpiochip1 91=1
 ```
 
 **Note: The `gpiochip` prefix can be omitted here as well.** 
+
+## Controlling GPIO via C++/Python
+The Libre Computer dev has written a tutorial on this:
+[tutorial link](https://hub.libre.computer/t/how-to-control-gpio-via-python-3/601)
