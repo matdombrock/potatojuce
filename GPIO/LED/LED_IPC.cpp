@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unistd.h>
 #include "LED_Driver.h"
 
 bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
@@ -45,6 +46,7 @@ int main() {
     }
 
     std::string line;
+    int i;
     while(true){
         while (getline_async(fifo, line)) {
             int num;
@@ -52,7 +54,9 @@ int main() {
             std::cout << "Received message: " << line << std::endl;
             led.set((bool)num);
         }
-        std::cout << "loop\n";
+        led.set((i & 1) != 0);
+        i++;
+        usleep(100000);
     }
     
     led.release();
