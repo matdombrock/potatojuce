@@ -98,11 +98,18 @@ gpioset gpiochip1 91=1
 
 **Note: The `gpiochip` prefix can be omitted here as well.** 
 
-## Controlling GPIO via C++/Python
+## Controlling GPIO via C++ (or Python)
+> libgpiod is the preferred C interface to interact with the Linux kernel’s GPIO subsystem. Every one of our boards feature GPIOs that can be controlled through this interface. It is well supported, stable, reliable, and well designed.
+
+### `libgpiod` C++ Bindings:
+[Official Docs](https://libgpiod.readthedocs.io/en/latest/group__gpiod__cxx.html)
+
+### Exploring `libgpiod`:
+https://www.ics.com/blog/gpio-programming-exploring-libgpiod-library
+
+### Other Resources:
 The Libre Computer dev has written a tutorial on this:
 [tutorial link](https://hub.libre.computer/t/how-to-control-gpio-via-python-3/601)
-
-> libgpiod is the preferred C interface to interact with the Linux kernel’s GPIO subsystem. Every one of our boards feature GPIOs that can be controlled through this interface. It is well supported, stable, reliable, and well designed.
 
 There are Python wrappers provided in the links above. 
 
