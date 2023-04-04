@@ -148,7 +148,7 @@ private:
         return tokens;
     }
 
-    std::map<std::string, GPIO> devices;
+    std::map<std::string, GPIO> devices = {};
 };
 
 int main(int argc, char **argv)
