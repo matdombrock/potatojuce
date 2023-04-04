@@ -65,13 +65,12 @@ public:
                     std::cout << deviceId << std::endl;
                     continue;
                 }
-                GPIO* device = &devices[deviceId];
                 // val will be -1 if unset
                 std::string valStr = split.size() > 1 ? split[2] : "-1";
                 int valInt = std::stoi(valStr);
                 // Check if we have a bool
                 if(valInt == 0 || valInt == 1){
-                    device->set((bool)valInt);
+                    devices[deviceId].set((bool)valInt);
                 }
                 else{
                     // run special setup
