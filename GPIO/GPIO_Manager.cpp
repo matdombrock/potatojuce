@@ -41,10 +41,12 @@ public:
             std::cerr << "Failed to open input FIFO: " << fifoPath << std::endl;
             return 1;
         }
-        std::ofstream outFile("/tmp/pgpio-out", std::ofstream::trunc); // create an output file stream
+        std::ofstream outFile; // create an output file stream
+        outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
         if (!outFile.is_open()) { // check if the file is open
             std::cerr << "Failed to open output File: " << std::endl;
             return 1;
+            outFile.close();// Close for now
         }
 
         initialize();
@@ -97,7 +99,9 @@ public:
                 std::string pinName = it->first;
                 int pinVal = pinsR[pinName].get();// Not a bool!
                 std::string outString = std::to_string(pinVal);
+                outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
                 outFile << outString; // write the string to the file
+                outFile.close();
             }
         }
         close(&fifo, &outFile);
