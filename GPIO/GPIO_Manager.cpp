@@ -108,7 +108,7 @@ private:
         for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
             std::string pinName = it->first;
             std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
-            pinsR[pinName].relase();
+            pinsR[pinName].release();
         }
         fifo->close();
     }
