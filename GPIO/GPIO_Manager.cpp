@@ -18,7 +18,7 @@
 class IPCWatcher{
 public:
     void addDevice(std::string newDeviceId, const char* newChipName, int newLineNum){
-        if(devices[newDeviceId]){
+        if(devices.count(newDeviceId)){
             std::cout << "Error: Device ID Exists: "+newDeviceId;
             return;
         }
