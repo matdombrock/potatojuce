@@ -1,10 +1,10 @@
+/*
+    This is basically just a wrapper for gpiod
+*/
+
 #include <gpiod.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <unistd.h>
 
 
 class GPIO{
