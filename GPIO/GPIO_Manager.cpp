@@ -60,7 +60,7 @@ public:
                 }
                 std::string deviceId = split[0];
                 // Ensure we have a valid device
-                if(!devices[deviceId]){
+                if(!devices.count(deviceId)){
                     std::cout << "Error: Bad Device Id" << std::endl;
                     std::cout << deviceId << std::endl;
                     continue;
