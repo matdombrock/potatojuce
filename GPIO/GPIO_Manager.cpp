@@ -17,12 +17,17 @@
 
 class IPCWatcher{
 public:
-    void addDevice(std::string newDeviceId, const char* newChipName, int newLineNum){
-        if(devices.count(newDeviceId)){
-            std::cout << "Error: Device ID Exists: "+newDeviceId;
+    void addDevice(std::string newpinName, const char* newChipName, int newLineNum, bool writeMode){
+        if(deviceExists(newpinName)){
+            std::cout << "Error: pinName Exists: "+newpinName;
             return;
         }
-        devices[newDeviceId] = GPIO(newChipName, newLineNum);
+        if(writeMode){
+            pinsW[newpinName] = GPIO(newChipName, newLineNum);
+        }
+        else{
+            pinsR[newpinName] = GPIO(newChipName, newLineNum);
+        }
     }
     int start(std::string newFifoPath="/tmp/pgpio-fifo"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
@@ -46,72 +51,86 @@ public:
                     std::cout << "Error: Bad Input" << std::endl;
                     continue;
                 }
-                std::string deviceId = split[0];
+                std::string pinName = split[0];
                 // Ensure we have a valid device
-                if(!devices.count(deviceId)){
-                    std::cout << "Error: Bad Device Id" << std::endl;
-                    std::cout << deviceId << std::endl;
+                if(!deviceExists(pinName)){
+                    std::cout << "Error: Bad pinName" << std::endl;
+                    std::cout << pinName << std::endl;
                     continue;
                 }
-                // val will be -1 if unset
-                std::string valStr = split.size() > 1 ? split[1] : "-1";
-
-                int valInt = std::stoi(valStr);
-                // Check if we have a bool
-                if(valInt == 0 || valInt == 1){
-                    devices[deviceId].set((bool)valInt);
+                if(isReadMode(pinName)){
+                    // Read mode
                 }
                 else{
-                    // run special setup
-                }
-                // Set
-                // <deviceId> <val>
-                // Get
-                // <deviceId>
+                    // Write mode
+                    // Val will be -1 if unset
+                    std::string valStr = split.size() > 1 ? split[1] : "-1";
 
-                // int num;
-                // num = std::stoi(line);
-                // if(num < 0){
-                //     run = false;
-                //     std::cout << "Break " << line << std::endl;
-                //     continue;
-                // }
-                // else if(num > 1){
-                //     pwm = num;
-                //     std::cout << "PWM " << line << " microseconds" << std::endl;
-                //     continue;
-                // }
-                // else{
-                //     pwm = 0;
-                //     std::cout << "Set " << line << std::endl;
-                //     led.set((bool)num);
-                // }
+                    int valInt = std::stoi(valStr);
+                    // Check if we have a bool
+                    if(valInt == 0 || valInt == 1){
+                        pinsW[pinName].set((bool)valInt);
+                    }
+                    else{
+                        // run special setup
+                        // if(pwm){
+                        //     led.set((i & 1) != 0);
+                        //     i++;
+                        //     usleep(pwm);//microseconds
+                        // }
+                    }
+                }
             }
-            // if(pwm){
-            //     led.set((i & 1) != 0);
-            //     i++;
-            //     usleep(pwm);//microseconds
-            // }
         }
         close(&fifo);
         return 0;
     }
 private:
     void initialize(){
-        for (auto it = devices.begin(); it != devices.end(); ++it) {
-            std::string deviceId = it->first;
-            std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            devices[deviceId].open();
+        for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
+            std::string pinName = it->first;
+            std::cout <<"Opening GPIO Device: " << pinName << std::endl;
+            pinsW[pinName].open();
+        }
+        for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
+            std::string pinName = it->first;
+            std::cout <<"Opening GPIO Device: " << pinName << std::endl;
+            pinsR[pinName].open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
     void close(std::ifstream * fifo){
-        for (auto it = devices.begin(); it != devices.end(); ++it) {
-            std::string deviceId = it->first;
-            std::cout <<"Releasing GPIO Device: " << deviceId << std::endl;
-            devices[deviceId].release();
+        for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
+            std::string pinName = it->first;
+            std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
+            pinsW[pinName].release();
+        }
+        for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
+            std::string pinName = it->first;
+            std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
+            pinsR[pinName].relase();
         }
         fifo->close();
+    }
+    bool deviceExists(std::string pinName){
+        if(pinsR.count(pinName)){
+            return true;
+        }
+        if(pinsW.count(pinName)){
+            return true;
+        }
+        return false;
+    }
+    bool isReadMode(std::string pinName){
+        if(pinsR.count(pinName)){
+            return true;
+        }
+        if(pinsW.count(pinName)){
+            return false;
+        }
+        std::cout << "Error: Pin not open";
+        // Default to read
+        return false;
     }
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
@@ -151,7 +170,8 @@ private:
         return tokens;
     }
 
-    std::map<std::string, GPIO> devices = {};
+    std::map<std::string, GPIO> pinsR = {};
+    std::map<std::string, GPIO> pinsW = {};
 };
 
 int main(int argc, char **argv)
@@ -159,8 +179,8 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
-  watcher.addDevice("led1","gpiochip1", 91);// chip name, line number
-  watcher.addDevice("led2","gpiochip1", 98);// chip name, line number
+  watcher.addDevice("led1","gpiochip1", 91, 0);// chip name, line number
+  watcher.addDevice("led2","gpiochip1", 98, 0);// chip name, line number
   watcher.start("/tmp/pgpio-fifo");
   return 0;
 }
