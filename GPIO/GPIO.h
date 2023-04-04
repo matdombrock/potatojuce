@@ -9,7 +9,7 @@
 
 class GPIO{
 public:
-    GPIO(const char* newChipName, int newLineNum){
+    GPIO(const char* newChipName="gpiochip1", int newLineNum=98){
         chipName = newChipName;
         lineNum = newLineNum;
     }
