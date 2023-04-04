@@ -3,7 +3,7 @@
 // First do
 // $ mkfio /tmp/led_fifo
 
-#include "GPIO.h"
+//#include "GPIO.h"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -25,16 +25,18 @@ public:
         devices[newDeviceId] = GPIO(newChipName, newLineNum);
     }
     void initialize(){
-        for (auto& [deviceId, gpio] : devices) {
+        for (auto it = devices.begin(); it != devices.end(); ++it) {
+            std::string deviceId = it->first;
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio.open();
+            devices[deviceId].open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
     void close(std::ifstream * fifo){
-        for (auto& [deviceId, gpio] : devices) {
-            std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio.release();
+        for (auto it = devices.begin(); it != devices.end(); ++it) {
+            std::string deviceId = it->first;
+            std::cout <<"Releasing GPIO Device: " << deviceId << std::endl;
+            devices[deviceId].release();
         }
         fifo->close();
     }
