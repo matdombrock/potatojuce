@@ -40,7 +40,7 @@ public:
     } 
 private:
     const char *chipName;
+    int lineNum = 0; 
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
-    int lineNum = 0; 
 };
