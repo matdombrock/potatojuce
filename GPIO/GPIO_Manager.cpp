@@ -38,7 +38,12 @@ public:
         std::string fifoPath = newFifoPath;
         std::ifstream fifo(fifoPath);
         if (!fifo.is_open()) {
-            std::cerr << "Failed to open FIFO: " << fifoPath << std::endl;
+            std::cerr << "Failed to open input FIFO: " << fifoPath << std::endl;
+            return 1;
+        }
+        std::ofstream outFile("/tmp/pgpio-out"); // create an output file stream
+        if (!outFile.is_open()) { // check if the file is open
+            std::cerr << "Failed to open output File: " << std::endl;
             return 1;
         }
 
@@ -90,11 +95,12 @@ public:
             //
             for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
                 std::string pinName = it->first;
-                std::cout <<"Reading GPIO Device: " << pinName << std::endl;
-                std::cout << pinsR[pinName].get() << std::endl;
+                int pinVal = pinsR[pinName].get();// Not a bool!
+                std::string outString = (std::string)pinVal;
+                outFile << outString; // write the string to the file
             }
         }
-        close(&fifo);
+        close(&fifo, &outFile);
         return 0;
     }
 private:
@@ -111,7 +117,7 @@ private:
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
-    void close(std::ifstream * fifo){
+    void close(std::ifstream * fifo, std::ofstream * outFile){
         for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
             std::string pinName = it->first;
             std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
@@ -123,6 +129,7 @@ private:
             pinsR[pinName].release();
         }
         fifo->close();
+        outFile->close(); // close the file
     }
     bool deviceExists(std::string pinName){
         if(pinsR.count(pinName)){
