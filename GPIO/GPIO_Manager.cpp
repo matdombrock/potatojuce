@@ -25,16 +25,16 @@ public:
         devices[newDeviceId] = GPIO(newChipName, newLineNum);
     }
     void initialize(){
-        for (const auto& [deviceId, gpio] : devices) {
+        for (auto& [deviceId, gpio] : devices) {
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio->open();
+            gpio.open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
     void close(){
-        for (const auto& [deviceId, gpio] : devices) {
+        for (auto& [deviceId, gpio] : devices) {
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio->release();
+            gpio.release();
         }
         fifo.close();
     }
