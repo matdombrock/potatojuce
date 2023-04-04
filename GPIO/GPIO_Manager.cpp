@@ -27,14 +27,14 @@ public:
     void initialize(){
         for (const auto& [deviceId, gpio] : devices) {
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio.open();
+            gpio->open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
     void close(){
         for (const auto& [deviceId, gpio] : devices) {
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            gpio.close();
+            gpio->release();
         }
         fifo.close();
     }
