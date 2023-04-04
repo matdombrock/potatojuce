@@ -96,7 +96,7 @@ public:
             for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
                 std::string pinName = it->first;
                 int pinVal = pinsR[pinName].get();// Not a bool!
-                std::string outString = (std::string)pinVal;
+                std::string outString = std::to_string(pinVal);
                 outFile << outString; // write the string to the file
             }
         }
