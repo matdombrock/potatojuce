@@ -31,6 +31,9 @@ public:
     void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
+    bool get(){
+        return gpiod_line_get_value(lineLED);
+    }
     void log(std::string msg){
         std::cout << "---------------------------" << std::endl;
         std::cout << msg << std::endl;

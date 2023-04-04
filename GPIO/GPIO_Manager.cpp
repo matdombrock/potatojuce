@@ -48,6 +48,7 @@ public:
         bool run = true;
         int i;
         while(run){
+            // Read loop
             while (getline_async(fifo, line)) {
                 std::cout << "Received message: " << line << std::endl;
                 std::vector<std::string> split = splitLine(line);
@@ -63,9 +64,6 @@ public:
                     continue;
                 }
                 if(isWriteMode(pinName)){
-                    //
-                    // Write mode
-                    //
                     // Val will be -1 if unset
                     std::string valStr = split.size() > 1 ? split[1] : "-1";
 
@@ -84,10 +82,16 @@ public:
                     }
                 }
                 else{
-                    //
-                    // Read mode
-                    //
+                    std::cout << "Error: Pin is not in write mode!" << std::endl;
                 }
+            }
+            //
+            // Read mode
+            //
+            for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
+                std::string pinName = it->first;
+                std::cout <<"Reading GPIO Device: " << pinName << std::endl;
+                std::cout << pinsR[pinName].get() << std::endl;
             }
         }
         close(&fifo);
