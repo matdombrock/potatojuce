@@ -58,11 +58,10 @@ public:
                     std::cout << pinName << std::endl;
                     continue;
                 }
-                if(isReadMode(pinName)){
-                    // Read mode
-                }
-                else{
+                if(isWriteMode(pinName)){
+                    //
                     // Write mode
+                    //
                     // Val will be -1 if unset
                     std::string valStr = split.size() > 1 ? split[1] : "-1";
 
@@ -79,6 +78,11 @@ public:
                         //     usleep(pwm);//microseconds
                         // }
                     }
+                }
+                else{
+                    //
+                    // Read mode
+                    //
                 }
             }
         }
@@ -121,12 +125,12 @@ private:
         }
         return false;
     }
-    bool isReadMode(std::string pinName){
+    bool isWriteMode(std::string pinName){
         if(pinsR.count(pinName)){
-            return true;
+            return false;
         }
         if(pinsW.count(pinName)){
-            return false;
+            return true;
         }
         std::cout << "Error: Pin not open";
         // Default to read
