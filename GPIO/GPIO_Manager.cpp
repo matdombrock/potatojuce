@@ -17,16 +17,20 @@
 
 class IPCWatcher{
 public:
-    void addDevice(std::string newpinName, const char* newChipName, int newLineNum, bool writeMode){
-        if(deviceExists(newpinName)){
-            std::cout << "Error: pinName Exists: "+newpinName;
+    void addDevice(std::string newPinName, const char* newChipName, int newLineNum, bool writeMode){
+        if(deviceExists(newPinName)){
+            std::cout << "Error: pinName Exists: "+newPinName;
             return;
         }
         if(writeMode){
-            pinsW[newpinName] = GPIO(newChipName, newLineNum);
+            std::cout << "Adding write pin: " << newPinName << std::endl;
+            std::cout << newChipName << " " << newLineNum << std::endl;  
+            pinsW[newPinName] = GPIO(newChipName, newLineNum);
         }
         else{
-            pinsR[newpinName] = GPIO(newChipName, newLineNum);
+            pinsR[newPinName] = GPIO(newChipName, newLineNum);
+            std::cout << "Adding write pin: " << newPinName << std::endl;
+            std::cout << newChipName << " " << newLineNum << std::endl; 
         }
     }
     int start(std::string newFifoPath="/tmp/pgpio-fifo"){
@@ -183,8 +187,8 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
-  watcher.addDevice("led1","gpiochip1", 91, 0);// chip name, line number
-  watcher.addDevice("led2","gpiochip1", 98, 0);// chip name, line number
+  watcher.addDevice("led1","gpiochip1", 91, 1);// chip name, line number
+  watcher.addDevice("led2","gpiochip1", 98, 1);// chip name, line number
   watcher.start("/tmp/pgpio-fifo");
   return 0;
 }
