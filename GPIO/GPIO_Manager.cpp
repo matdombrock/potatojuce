@@ -41,7 +41,7 @@ public:
             std::cerr << "Failed to open input FIFO: " << fifoPath << std::endl;
             return 1;
         }
-        std::ofstream outFile("/tmp/pgpio-out", ios::trunc); // create an output file stream
+        std::ofstream outFile("/tmp/pgpio-out", std::ios::trunc); // create an output file stream
         if (!outFile.is_open()) { // check if the file is open
             std::cerr << "Failed to open output File: " << std::endl;
             return 1;
