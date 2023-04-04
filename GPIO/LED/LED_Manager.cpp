@@ -38,7 +38,7 @@ bool getline_async(std::istream& is, std::string& str, char delim = '\n') {
     return lineRead;
 }
 
-int startIPCWatcher(std::string newFifoPath="/tmp/led_fifo"){
+int startIPCWatcher(std::string newFifoPath="/tmp/pgpio-fifo"){
     led.log("Starting IPC Watcher @ " + newFifoPath);
     led.open();
     std::string fifoPath = newFifoPath;
@@ -87,6 +87,6 @@ int main(int argc, char **argv)
 {
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
-  startIPCWatcher("/tmp/led_fifo");
+  startIPCWatcher("/tmp/pgpio-fifo");
   return 0;
 }
