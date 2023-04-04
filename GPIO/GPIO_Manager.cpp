@@ -24,22 +24,6 @@ public:
         }
         devices[newDeviceId] = GPIO(newChipName, newLineNum);
     }
-    void initialize(){
-        for (auto it = devices.begin(); it != devices.end(); ++it) {
-            std::string deviceId = it->first;
-            std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
-            devices[deviceId].open();
-        }
-        std::cout <<"Opened all GPIO Devices" << std::endl;
-    }
-    void close(std::ifstream * fifo){
-        for (auto it = devices.begin(); it != devices.end(); ++it) {
-            std::string deviceId = it->first;
-            std::cout <<"Releasing GPIO Device: " << deviceId << std::endl;
-            devices[deviceId].release();
-        }
-        fifo->close();
-    }
     int start(std::string newFifoPath="/tmp/pgpio-fifo"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
         std::string fifoPath = newFifoPath;
@@ -48,9 +32,11 @@ public:
             std::cerr << "Failed to open FIFO: " << fifoPath << std::endl;
             return 1;
         }
+
+        initialize();
+        
         std::string line;
         bool run = true;
-        int pwm = 0;
         int i;
         while(run){
             while (getline_async(fifo, line)) {
@@ -68,7 +54,8 @@ public:
                     continue;
                 }
                 // val will be -1 if unset
-                std::string valStr = split.size() > 1 ? split[2] : "-1";
+                std::string valStr = split.size() > 1 ? split[1] : "-1";
+
                 int valInt = std::stoi(valStr);
                 // Check if we have a bool
                 if(valInt == 0 || valInt == 1){
@@ -110,6 +97,22 @@ public:
         return 0;
     }
 private:
+    void initialize(){
+        for (auto it = devices.begin(); it != devices.end(); ++it) {
+            std::string deviceId = it->first;
+            std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
+            devices[deviceId].open();
+        }
+        std::cout <<"Opened all GPIO Devices" << std::endl;
+    }
+    void close(std::ifstream * fifo){
+        for (auto it = devices.begin(); it != devices.end(); ++it) {
+            std::string deviceId = it->first;
+            std::cout <<"Releasing GPIO Device: " << deviceId << std::endl;
+            devices[deviceId].release();
+        }
+        fifo->close();
+    }
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
         static std::string lineSoFar;
