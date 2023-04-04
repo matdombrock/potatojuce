@@ -3,7 +3,7 @@
 // First do
 // $ mkfio /tmp/led_fifo
 
-//#include "GPIO.h"
+#include "GPIO.h"
 #include <iostream>
 #include <map>
 #include <vector>
