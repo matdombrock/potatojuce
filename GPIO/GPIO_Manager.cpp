@@ -41,6 +41,9 @@ public:
             std::cerr << "Failed to open input FIFO: " << fifoPath << std::endl;
             return 1;
         }
+        //
+        // THIS SHOULD BE A PIPE!!!
+        //
         std::ofstream outFile; // create an output file stream
         outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
         if (!outFile.is_open()) { // check if the file is open
