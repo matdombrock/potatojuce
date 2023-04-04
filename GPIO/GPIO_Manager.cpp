@@ -31,12 +31,12 @@ public:
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
-    void close(){
+    void close(std::ifstream * fifo){
         for (auto& [deviceId, gpio] : devices) {
             std::cout <<"Opening GPIO Device: " << deviceId << std::endl;
             gpio.release();
         }
-        fifo.close();
+        fifo->close();
     }
     int start(std::string newFifoPath="/tmp/pgpio-fifo"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
@@ -105,6 +105,7 @@ public:
             //     usleep(pwm);//microseconds
             // }
         }
+        close(&fifo);
         return 0;
     }
 private:
