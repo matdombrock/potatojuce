@@ -116,7 +116,7 @@ public:
                 fifoOut << outString; // write the string to the file
             }
         }
-        close(&fifo, &outFile);
+        close(&fifoIn, &fifoOut);
         return 0;
     }
 private:
@@ -133,7 +133,7 @@ private:
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
-    void close(std::ifstream * fifo, std::ofstream * outFile){
+    void close(std::ifstream * fifoIn,std::ofstream * fifoOut){
         for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
             std::string pinName = it->first;
             std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
@@ -144,8 +144,8 @@ private:
             std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
             pinsR[pinName].release();
         }
-        fifo->close();
-        outFile->close(); // close the file
+        fifoIn->close();
+        fifoOut->close(); // close the file
     }
     bool deviceExists(std::string pinName){
         if(pinsR.count(pinName)){
