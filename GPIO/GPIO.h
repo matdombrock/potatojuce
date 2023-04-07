@@ -28,7 +28,7 @@ public:
         gpiod_line_release(lineLED);
         gpiod_chip_close(chip);
     }
-    void set(bool val){
+    virtual void set(bool val){
         gpiod_line_set_value(lineLED, val);
     }
     bool get(){
