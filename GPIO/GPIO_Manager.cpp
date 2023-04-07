@@ -121,6 +121,7 @@ public:
                 if(pinStateCache != pinVal){
                     std::string outString = std::to_string(pinVal);
                     fifoOut << outString; // write the string to the file
+                    std::cout << outString << std::endl;
                 }
             }
         }
