@@ -22,13 +22,13 @@ public:
     {
 
     }
-    void set(bool val) override{
+    void GPIO::set(bool val) override{
         gpiod_line_set_value(lineLED, val);
         state = 0;
     }
     int state = 0;
 private:
-}
+};
 
 class IPCWatcher{
 public:

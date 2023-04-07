@@ -41,9 +41,10 @@ public:
         std::cout << "Line Number: " << lineNum << std::endl;
         std::cout << "---------------------------" << std::endl;
     } 
-private:
     const char *chipName;
     int lineNum = 0; 
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
+private:
+    
 };
