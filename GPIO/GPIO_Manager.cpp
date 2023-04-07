@@ -62,24 +62,24 @@ public:
         std::cout << "In path: " << fifoPathIn << std::endl;
         std::cout << "Out path: " << fifoPathOut << std::endl;
 
-        std::cout << "Waiting on input FIFO...";
+        std::cout << "Waiting on input FIFO..." << std::endl;
         std::ifstream fifoIn(fifoPathIn);
         if (!fifoIn.is_open()) {
-            std::cerr << "Failed to open input FIFO: " << std::endl;
+            std::cerr << "Failed to open input FIFO: "+fifoPathIn << std::endl;
             return 1;
         }
         else{
-            std::cout << "Opened Input FIFO: "+fifoPathIn << std::endl;
+            std::cout << "Opened Input FIFO" << std::endl;
         }
         
-        std::cout << "Waiting on output FIFO...";
+        std::cout << "Waiting on output FIFO..." << std::endl;
         std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
         if (!fifoOut.is_open()) { // check if the file is open
-            std::cerr << "Failed to open output File: " << std::endl;
+            std::cerr << "Failed to open output File: "+fifoPathOut << std::endl;
             return 1;
         }
         else{
-            std::cout << "Opened Output FIFO: "+fifoPathOut << std::endl;
+            std::cout << "Opened Output FIFO" << std::endl;
         }
 
         initialize();
