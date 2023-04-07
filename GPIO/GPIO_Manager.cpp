@@ -135,7 +135,7 @@ public:
                 // Only write new values
                 if(pinStateCache != pinVal){
                     std::string outString = std::to_string(pinVal);
-                    fifoOut << outString; // write the string to the file
+                    fifoOut << outString << std::endl; // write the string to the file
                     std::cout << outString << std::endl;
                 }
             }
