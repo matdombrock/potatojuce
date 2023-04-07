@@ -5,7 +5,7 @@
 
 #include "GPIO.h"
 #include <iostream>
-#include <map>
+//#include <map>
 #include <vector>
 #include <stdio.h>
 #include <unistd.h>
@@ -17,10 +17,10 @@
 
 class GPIOMeta : public GPIO{
 public:
-    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98) 
+    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98, bool newWriteMode) 
         : GPIO(newChipName, newLineNum)
     {
-
+        writeMode = newWriteMode;
     }
     void set(bool val) override{
         gpiod_line_set_value(lineLED, val);
@@ -31,25 +31,22 @@ public:
         return state;
     }
     int state = 0;
+    bool writeMode = false;
 private:
 };
 
 class IPCWatcher{
 public:
-    void addDevice(std::string newPinName, const char* newChipName, int newLineNum, bool writeMode){
-        if(deviceExists(newPinName)){
-            std::cout << "Error: pinName Exists: "+newPinName;
-            return;
-        }
+    void addDevice(const char* newChipName, int newLineNum, bool writeMode){
         if(writeMode){
-            std::cout << "Adding write pin: " << newPinName << std::endl;
+            std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW[newPinName] = GPIOMeta(newChipName, newLineNum);
+            pinsW.push_back(GPIOMeta(newChipName, newLineNum));
         }
         else{
-            pinsR[newPinName] = GPIOMeta(newChipName, newLineNum);
-            std::cout << "Adding write pin: " << newPinName << std::endl;
+            std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl; 
+            pinsR.push_back(GPIOMeta(newChipName, newLineNum));
         }
     }
     int start(std::string newFifoPath="/tmp/pgpio"){
@@ -103,35 +100,31 @@ public:
                 //     std::cout << pinName << std::endl;
                 //     continue;
                 // }
-                if(isWriteMode(pinName)){
-                    // Val will be -1 if unset
-                    if(line.size()>pinsW.size()){
-                        std::cerr << "Input too long" << std::end;
-                        continue;
-                    }
-                    if(line.size()<1){
-                        std::cerr << "Input too short" << std::end;
-                        continue;
-                    }
-                    for(char ch of line){
-                        //int valInt = std::stoi(c);
-                        int valInt = int(ch) - 48;// ctoi
-                        // Check if we have a bool
-                        if(valInt == 0 || valInt == 1){
-                            pinsW[pinName].set((bool)valInt);
-                        }
-                        else{
-                            // run special setup
-                            // if(pwm){
-                            //     led.set((i & 1) != 0);
-                            //     i++;
-                            //     usleep(pwm);//microseconds
-                            // }
-                        }
-                    }
+                // Val will be -1 if unset
+                if(line.size()>pinsW.size()){
+                    std::cerr << "Input too long" << std::end;
+                    continue;
                 }
-                else{
-                    std::cout << "Error: Pin is not in write mode!" << std::endl;
+                if(line.size()<1){
+                    std::cerr << "Input too short" << std::end;
+                    continue;
+                }
+                for(int i = 0; i < line.size(); i++){
+                    //int valInt = std::stoi(c);
+                    char ch = line[i];
+                    int valInt = int(ch) - 48;// ctoi
+                    // Check if we have a bool
+                    if(valInt == 0 || valInt == 1){
+                        pinsW[i].set((bool)valInt);
+                    }
+                    else{
+                        // run special setup
+                        // if(pwm){
+                        //     led.set((i & 1) != 0);
+                        //     i++;
+                        //     usleep(pwm);//microseconds
+                        // }
+                    }
                 }
             }
             //
@@ -139,10 +132,9 @@ public:
             //
             std::string readOut;
             bool valChanged = false;
-            for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
-                std::string pinName = it->first;
-                int pinStateCache = pinsR[pinName].state;
-                int pinVal = pinsR[pinName].get();// Not a bool!
+            for (int i = 0; i < pinsR.size(); i++) {
+                int pinStateCache = pinsR[i].state;
+                int pinVal = pinsR[i].get();// Not a bool!
                 std::string pinString = std::to_string(pinVal);
                 readOut+=pinString;
                 if(pinStateCache != pinVal){
@@ -161,52 +153,50 @@ public:
     }
 private:
     void initialize(){
-        for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
-            std::string pinName = it->first;
-            std::cout <<"Opening GPIO Device: " << pinName << std::endl;
-            pinsW[pinName].open();
+        for (int i = 0; i < pinsW.size(); i++) {
+            std::cout <<"Opening GPIO Device: " << i << std::endl;
+            pinsW[i].open();
         }
-        for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
-            std::string pinName = it->first;
-            std::cout <<"Opening GPIO Device: " << pinName << std::endl;
-            pinsR[pinName].open();
+        for (int i = 0; i < pinsR.size(); i++) {
+            std::cout <<"Opening GPIO Device: " << i << std::endl;
+            pinsR[i].open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
     void close(std::ifstream * fifoIn,std::ofstream * fifoOut){
-        for (auto it = pinsW.begin(); it != pinsW.end(); ++it) {
-            std::string pinName = it->first;
-            std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
-            pinsW[pinName].release();
+        for (int i = 0; i < pinsW.size(); i++) {
+            std::cout <<"Releasing GPIO Device: " << i << std::endl;
+            pinsW[i].release();
         }
-        for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
-            std::string pinName = it->first;
-            std::cout <<"Releasing GPIO Device: " << pinName << std::endl;
-            pinsR[pinName].release();
+        for (int i = 0; i < pinsR.size(); i++) {
+            std::cout <<"Releasing GPIO Device: " << i << std::endl;
+            pinsR[i].release();
         }
         fifoIn->close();
         fifoOut->close(); // close the file
     }
-    bool deviceExists(std::string pinName){
-        if(pinsR.count(pinName)){
-            return true;
-        }
-        if(pinsW.count(pinName)){
-            return true;
-        }
-        return false;
-    }
-    bool isWriteMode(std::string pinName){
-        if(pinsR.count(pinName)){
-            return false;
-        }
-        if(pinsW.count(pinName)){
-            return true;
-        }
-        std::cout << "Error: Pin not open";
-        // Default to read
-        return false;
-    }
+    // Deprecated
+    // bool deviceExists(std::string pinName){
+    //     if(pinsR.count(pinName)){
+    //         return true;
+    //     }
+    //     if(pinsW.count(pinName)){
+    //         return true;
+    //     }
+    //     return false;
+    // }
+    // Deprecated
+    // bool isWriteMode(std::string pinName){
+    //     if(pinsR.count(pinName)){
+    //         return false;
+    //     }
+    //     if(pinsW.count(pinName)){
+    //         return true;
+    //     }
+    //     std::cout << "Error: Pin not open";
+    //     // Default to read
+    //     return false;
+    // }
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
         static std::string lineSoFar;
@@ -245,8 +235,10 @@ private:
         return tokens;
     }
 
-    std::map<std::string, GPIOMeta> pinsR = {};
-    std::map<std::string, GPIOMeta> pinsW = {};
+    //std::map<std::string, GPIOMeta> pinsR = {};
+    //std::map<std::string, GPIOMeta> pinsW = {};
+    std::vector<GPIOMeta> pinsR = {};
+    std::vector<GPIOMeta> pinsW = {};
 };
 
 int main(int argc, char **argv)
