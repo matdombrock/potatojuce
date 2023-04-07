@@ -15,6 +15,21 @@
 #include <string>
 #include <unistd.h>
 
+class GPIOMeta : public GPIO{
+public:
+    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98) 
+        : GPIO(newChipName, newLineNum)
+    {
+
+    }
+    void set(bool val) override{
+        gpiod_line_set_value(lineLED, val);
+        state = 0;
+    }
+    int state = 0;
+private:
+}
+
 class IPCWatcher{
 public:
     void addDevice(std::string newPinName, const char* newChipName, int newLineNum, bool writeMode){
@@ -43,6 +58,7 @@ public:
         }
         //
         // THIS SHOULD BE A PIPE!!!
+        // Write bits
         //
         std::ofstream outFile; // create an output file stream
         outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
@@ -196,8 +212,8 @@ private:
         return tokens;
     }
 
-    std::map<std::string, GPIO> pinsR = {};
-    std::map<std::string, GPIO> pinsW = {};
+    std::map<std::string, GPIOMeta> pinsR = {};
+    std::map<std::string, GPIOMeta> pinsW = {};
 };
 
 int main(int argc, char **argv)
