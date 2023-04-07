@@ -134,7 +134,7 @@ public:
                 int pinVal = pinsR[pinName].get();// Not a bool!
                 // Only write new values
                 if(pinStateCache != pinVal){
-                    std::string outString = std::to_string(pinVal);
+                    std::string outString = pinName + " " + std::to_string(pinVal);
                     fifoOut << outString << std::endl; // write the string to the file
                     std::cout << outString << std::endl;
                 }
