@@ -246,10 +246,10 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
-  watcher.addDevice("led1","gpiochip1", 91, 1);// chip name, line number
-  watcher.addDevice("led2","gpiochip1", 98, 1);// chip name, line number
-  watcher.addDevice("readTest","gpiochip1", 93, 0);// chip name, line number
-  watcher.addDevice("readTest2","gpiochip1", 94, 0);// chip name, line number
+  watcher.addDevice("gpiochip1", 91, 1);// chip name, line number
+  watcher.addDevice("gpiochip1", 98, 1);// chip name, line number
+  watcher.addDevice("gpiochip1", 93, 0);// chip name, line number
+  watcher.addDevice("gpiochip1", 94, 0);// chip name, line number
   watcher.start("/tmp/pgpio");
   return 0;
 }
