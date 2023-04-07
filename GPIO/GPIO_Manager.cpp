@@ -54,19 +54,28 @@ public:
     }
     int start(std::string newFifoPath="/tmp/pgpio"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
+
         std::string fifoPathIn = newFifoPath + "-in";
+        std::string fifoPathOut = newFifoPath + "-out";
+
+        std::cout << "Setting up IPC FIFO" << std::endl;
+        std::cout << "In path: " << fifoPathIn << std::endl;
+        std::cout << "Out path: " << fifoPathOut << std::endl;
+
+        std::cout << "Waiting on input FIFO...";
         std::ifstream fifoIn(fifoPathIn);
         if (!fifoIn.is_open()) {
-            std::cerr << "Failed to open input FIFO: " << fifoPathIn << std::endl;
+            std::cerr << "Failed to open input FIFO: " << std::endl;
             return 1;
         }
         else{
             std::cout << "Opened Input FIFO: "+fifoPathIn << std::endl;
         }
-        std::string fifoPathOut = newFifoPath + "-out";
+        
+        std::cout << "Waiting on output FIFO...";
         std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
         if (!fifoOut.is_open()) { // check if the file is open
-            std::cerr << "Failed to open output File: " << fifoPathOut << std::endl;
+            std::cerr << "Failed to open output File: " << std::endl;
             return 1;
         }
         else{
