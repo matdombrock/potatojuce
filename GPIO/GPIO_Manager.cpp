@@ -128,16 +128,23 @@ public:
             //
             // Read mode
             //
+            std::string readOut;
+            bool valChanged = false;
             for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
                 std::string pinName = it->first;
                 int pinStateCache = pinsR[pinName].state;
                 int pinVal = pinsR[pinName].get();// Not a bool!
-                // Only write new values
+                std::string pinString = pinName + " " + std::to_string(pinVal);
+                readOut+=pinString;
                 if(pinStateCache != pinVal){
-                    std::string outString = pinName + " " + std::to_string(pinVal);
-                    fifoOut << outString << std::endl; // write the string to the file
-                    std::cout << outString << std::endl;
+                    // We have a new value
+                    valChanged = true;
                 }
+            }
+            // Only write when we have new values
+            if(valChanged){
+                fifoOut << readOut << std::endl; // write the string to the file
+                std::cout << readOut << std::endl;
             }
         }
         close(&fifoIn, &fifoOut);
