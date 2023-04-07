@@ -96,21 +96,21 @@ public:
                 //     std::cout << "Error: Bad Input" << std::endl;
                 //     continue;
                 // }
-                std::string pinName = split[0];
+                //std::string pinName = split[0];
                 // Ensure we have a valid device
-                if(!deviceExists(pinName)){
-                    std::cout << "Error: Bad pinName" << std::endl;
-                    std::cout << pinName << std::endl;
-                    continue;
-                }
+                // if(!deviceExists(pinName)){
+                //     std::cout << "Error: Bad pinName" << std::endl;
+                //     std::cout << pinName << std::endl;
+                //     continue;
+                // }
                 if(isWriteMode(pinName)){
                     // Val will be -1 if unset
                     if(line.size()>pinsW.size()){
-                        std::err << "Input too long" << std::end;
+                        std::cerr << "Input too long" << std::end;
                         continue;
                     }
                     if(line.size()<1){
-                        std::err << "Input too short" << std::end;
+                        std::cerr << "Input too short" << std::end;
                         continue;
                     }
                     for(char ch of line){
