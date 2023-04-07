@@ -102,11 +102,11 @@ public:
                 // }
                 // Val will be -1 if unset
                 if(line.size()>pinsW.size()){
-                    std::cerr << "Input too long" << std::end;
+                    std::cerr << "Input too long" << std::endl;
                     continue;
                 }
                 if(line.size()<1){
-                    std::cerr << "Input too short" << std::end;
+                    std::cerr << "Input too short" << std::endl;
                     continue;
                 }
                 for(int i = 0; i < line.size(); i++){
