@@ -134,7 +134,7 @@ public:
                 std::string pinName = it->first;
                 int pinStateCache = pinsR[pinName].state;
                 int pinVal = pinsR[pinName].get();// Not a bool!
-                std::string pinString = pinName + " " + std::to_string(pinVal);
+                std::string pinString = std::to_string(pinVal);
                 readOut+=pinString;
                 if(pinStateCache != pinVal){
                     // We have a new value
