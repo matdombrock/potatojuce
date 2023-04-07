@@ -57,7 +57,7 @@ public:
             return 1;
         }
         std::string fifoPathOut = newFifoPath + "-out";
-        std::ofstream fifoOut(fifoPathOut, std::ofstream::out); // create an output file stream
+        std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
         if (!fifoOut.is_open()) { // check if the file is open
             std::cerr << "Failed to open output File: " << fifoPathOut << std::endl;
             return 1;
