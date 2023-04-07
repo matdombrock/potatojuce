@@ -113,8 +113,9 @@ public:
                         std::err << "Input too short" << std::end;
                         continue;
                     }
-                    for(char c of line){
-                        int valInt = std::stoi(c);
+                    for(char ch of line){
+                        //int valInt = std::stoi(c);
+                        int valInt = int(ch) - 48;// ctoi
                         // Check if we have a bool
                         if(valInt == 0 || valInt == 1){
                             pinsW[pinName].set((bool)valInt);
