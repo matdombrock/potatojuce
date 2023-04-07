@@ -91,11 +91,11 @@ public:
             // Read loop
             while (getline_async(fifoIn, line)) {
                 std::cout << "Received message: " << line << std::endl;
-                std::vector<std::string> split = splitLine(line);
-                if(split.size() == 0){
-                    std::cout << "Error: Bad Input" << std::endl;
-                    continue;
-                }
+                // std::vector<std::string> split = splitLine(line);
+                // if(split.size() == 0){
+                //     std::cout << "Error: Bad Input" << std::endl;
+                //     continue;
+                // }
                 std::string pinName = split[0];
                 // Ensure we have a valid device
                 if(!deviceExists(pinName)){
@@ -105,20 +105,28 @@ public:
                 }
                 if(isWriteMode(pinName)){
                     // Val will be -1 if unset
-                    std::string valStr = split.size() > 1 ? split[1] : "-1";
-
-                    int valInt = std::stoi(valStr);
-                    // Check if we have a bool
-                    if(valInt == 0 || valInt == 1){
-                        pinsW[pinName].set((bool)valInt);
+                    if(line.size()>pinsW.size()){
+                        std::err << "Input too long" << std::end;
+                        continue;
                     }
-                    else{
-                        // run special setup
-                        // if(pwm){
-                        //     led.set((i & 1) != 0);
-                        //     i++;
-                        //     usleep(pwm);//microseconds
-                        // }
+                    if(line.size()<1){
+                        std::err << "Input too short" << std::end;
+                        continue;
+                    }
+                    for(char c of line){
+                        int valInt = std::stoi(c);
+                        // Check if we have a bool
+                        if(valInt == 0 || valInt == 1){
+                            pinsW[pinName].set((bool)valInt);
+                        }
+                        else{
+                            // run special setup
+                            // if(pwm){
+                            //     led.set((i & 1) != 0);
+                            //     i++;
+                            //     usleep(pwm);//microseconds
+                            // }
+                        }
                     }
                 }
                 else{
