@@ -26,6 +26,10 @@ public:
         gpiod_line_set_value(lineLED, val);
         state = 0;
     }
+    bool get() override{
+        state = gpiod_line_get_value(lineLED);
+        return state;
+    }
     int state = 0;
 private:
 };
@@ -111,9 +115,13 @@ public:
             //
             for (auto it = pinsR.begin(); it != pinsR.end(); ++it) {
                 std::string pinName = it->first;
+                int pinStateCache = pinsR[pinName].state;
                 int pinVal = pinsR[pinName].get();// Not a bool!
-                std::string outString = std::to_string(pinVal);
-                fifoOut << outString; // write the string to the file
+                // Only write new values
+                if(pinStateCache != pinVal){
+                    std::string outString = std::to_string(pinVal);
+                    fifoOut << outString; // write the string to the file
+                }
             }
         }
         close(&fifoIn, &fifoOut);
