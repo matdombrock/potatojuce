@@ -22,7 +22,7 @@ public:
     {
 
     }
-    void GPIO::set(bool val) override{
+    void set(bool val) override{
         gpiod_line_set_value(lineLED, val);
         state = 0;
     }
