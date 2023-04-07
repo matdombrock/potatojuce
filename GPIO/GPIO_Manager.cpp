@@ -40,10 +40,10 @@ public:
         if(writeMode){
             std::cout << "Adding write pin: " << newPinName << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW[newPinName] = GPIO(newChipName, newLineNum);
+            pinsW[newPinName] = GPIOMeta(newChipName, newLineNum);
         }
         else{
-            pinsR[newPinName] = GPIO(newChipName, newLineNum);
+            pinsR[newPinName] = GPIOMeta(newChipName, newLineNum);
             std::cout << "Adding write pin: " << newPinName << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl; 
         }
