@@ -61,7 +61,7 @@ public:
             return 1;
         }
         else{
-            std::cout << "Opened Input FIFO: "+fifoInPath << std::endl;
+            std::cout << "Opened Input FIFO: "+fifoPathIn << std::endl;
         }
         std::string fifoPathOut = newFifoPath + "-out";
         std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
@@ -70,7 +70,7 @@ public:
             return 1;
         }
         else{
-            std::cout << "Opened Output FIFO: "+fifoOutPath << std::endl;
+            std::cout << "Opened Output FIFO: "+fifoPathOut << std::endl;
         }
 
         initialize();
