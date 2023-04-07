@@ -48,24 +48,19 @@ public:
             std::cout << newChipName << " " << newLineNum << std::endl; 
         }
     }
-    int start(std::string newFifoPath="/tmp/pgpio-fifo"){
+    int start(std::string newFifoPath="/tmp/pgpio"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
-        std::string fifoPath = newFifoPath;
-        std::ifstream fifo(fifoPath);
-        if (!fifo.is_open()) {
-            std::cerr << "Failed to open input FIFO: " << fifoPath << std::endl;
+        std::string fifoPathIn = newFifoPath + "-in";
+        std::ifstream fifoIn(fifoPathIn);
+        if (!fifoIn.is_open()) {
+            std::cerr << "Failed to open input FIFO: " << fifoPathIn << std::endl;
             return 1;
         }
-        //
-        // THIS SHOULD BE A PIPE!!!
-        // Write bits
-        //
-        std::ofstream outFile; // create an output file stream
-        outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
-        if (!outFile.is_open()) { // check if the file is open
-            std::cerr << "Failed to open output File: " << std::endl;
+        std::string fifoPathOut = newFifoPath + "-out";
+        std::ofstream fifoOut(fifoPathOut, std::ofstream::out); // create an output file stream
+        if (!fifoOut.is_open()) { // check if the file is open
+            std::cerr << "Failed to open output File: " << fifoPathOut << std::endl;
             return 1;
-            outFile.close();// Close for now
         }
 
         initialize();
@@ -75,7 +70,7 @@ public:
         int i;
         while(run){
             // Read loop
-            while (getline_async(fifo, line)) {
+            while (getline_async(fifoIn, line)) {
                 std::cout << "Received message: " << line << std::endl;
                 std::vector<std::string> split = splitLine(line);
                 if(split.size() == 0){
@@ -118,9 +113,7 @@ public:
                 std::string pinName = it->first;
                 int pinVal = pinsR[pinName].get();// Not a bool!
                 std::string outString = std::to_string(pinVal);
-                outFile.open("/tmp/pgpio-out", std::ofstream::trunc);
-                outFile << outString; // write the string to the file
-                outFile.close();
+                fifoOut << outString; // write the string to the file
             }
         }
         close(&fifo, &outFile);
