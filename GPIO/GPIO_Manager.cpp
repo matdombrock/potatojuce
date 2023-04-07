@@ -60,11 +60,17 @@ public:
             std::cerr << "Failed to open input FIFO: " << fifoPathIn << std::endl;
             return 1;
         }
+        else{
+            std::cout << "Opened Input FIFO: "+fifoInPath << std::endl;
+        }
         std::string fifoPathOut = newFifoPath + "-out";
         std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
         if (!fifoOut.is_open()) { // check if the file is open
             std::cerr << "Failed to open output File: " << fifoPathOut << std::endl;
             return 1;
+        }
+        else{
+            std::cout << "Opened Output FIFO: "+fifoOutPath << std::endl;
         }
 
         initialize();
