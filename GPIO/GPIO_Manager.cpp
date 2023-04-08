@@ -31,6 +31,7 @@ public:
         return state;
     }
     int state = 0;
+    bool writeMode = false;
 private:
 };
 
