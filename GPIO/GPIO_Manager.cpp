@@ -17,7 +17,7 @@
 
 class GPIOMeta : public GPIO{
 public:
-    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98) 
+    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98, bool newWriteMode=false) 
         : GPIO(newChipName, newLineNum)
     {
         writeMode = newWriteMode;
