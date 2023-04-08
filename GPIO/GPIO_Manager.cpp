@@ -17,9 +17,10 @@
 
 class GPIOMeta : public GPIO{
 public:
-    GPIOMeta(const char* newChipName="gpiochip1", int newLineNum=98, bool newWriteMode=false) 
+    GPIOMeta(std::string newName, const char* newChipName, int newLineNum, bool newWriteMode) 
         : GPIO(newChipName, newLineNum)
     {
+        name = newName;
         writeMode = newWriteMode;
     }
     void set(bool val) override{
@@ -31,22 +32,23 @@ public:
         return state;
     }
     int state = 0;
+    std::string name;
     bool writeMode = false;
 private:
 };
 
 class IPCWatcher{
 public:
-    void addDevice(const char* newChipName, int newLineNum, bool writeMode){
+    void addDevice(std::string name, const char* newChipName, int newLineNum, bool writeMode){
         if(writeMode){
             std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW.push_back(GPIOMeta(newChipName, newLineNum));
+            pinsW.push_back(GPIOMeta(name, newChipName, newLineNum, writeMode));
         }
         else{
             std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl; 
-            pinsR.push_back(GPIOMeta(newChipName, newLineNum));
+            pinsR.push_back(GPIOMeta(name, newChipName, newLineNum, writeMode));
         }
     }
     int start(std::string newFifoPath="/tmp/pgpio"){
@@ -246,10 +248,10 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
-  watcher.addDevice("gpiochip1", 91, 1);// chip name, line number
-  watcher.addDevice("gpiochip1", 98, 1);// chip name, line number
-  watcher.addDevice("gpiochip1", 93, 0);// chip name, line number
-  watcher.addDevice("gpiochip1", 94, 0);// chip name, line number
+  watcher.addDevice("led1", "gpiochip1", 91, true);// chip name, line number
+  watcher.addDevice("led2", "gpiochip1", 98, true);// chip name, line number
+  watcher.addDevice("read1", "gpiochip1", 93, false);// chip name, line number
+  watcher.addDevice("read2", "gpiochip1", 94, false);// chip name, line number
   watcher.start("/tmp/pgpio");
   return 0;
 }
