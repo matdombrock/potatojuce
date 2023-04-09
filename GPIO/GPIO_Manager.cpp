@@ -263,10 +263,10 @@ int main(int argc, char **argv)
   GPIO c1l98("gpiochip1", 98);
   
   // chip name, line number, writeMode
-  watcher.addDevice(c1l91, true);
-  watcher.addDevice(c1l98, true);
-  watcher.addDevice(c1l93, false);
-  watcher.addDevice(c1l94, false);
+  watcher.addDevice(&c1l91, true);
+  watcher.addDevice(&c1l98, true);
+  watcher.addDevice(&c1l93, false);
+  watcher.addDevice(&c1l94, false);
   watcher.start("/tmp/pgpio");
   return 0;
 }
