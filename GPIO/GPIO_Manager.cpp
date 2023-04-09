@@ -97,6 +97,10 @@ private:
                 }
                 else if(cmd == "pwm"){
                     // Not implemented
+                    // If PWM is slower than 100ms
+                    // we should treat it as a blink
+                    // which is based on time stamps
+                    // and not on sleeps
                 }
                 else{
                     std::cout << "Error: unknown cmd: " << cmd << std::endl;
