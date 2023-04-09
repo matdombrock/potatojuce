@@ -38,24 +38,7 @@
 
 class IPCWatcher{
 public:
-    // Getting add to work from NODE:
-    // Add needs a constant
-    // So I need to register all possible GPIO pins
-    // And let the Node user decide which to use
-    // Setting some for read and some for write
-    void addDevice(GPIO * gpio, bool writeMode){
-        if(writeMode){
-            std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
-            //std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW.push_back(gpio);
-        }
-        else{
-            std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
-            //std::cout << newChipName << " " << newLineNum << std::endl; 
-            pinsR.push_back(gpio);
-        }
-    }
-    int start(std::string newFifoPath="/tmp/pgpio"){
+    IPCWatcher(std::string newFifoPath="/tmp/pgpio"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
 
         std::string fifoPathIn = newFifoPath + "-in";
@@ -66,103 +49,25 @@ public:
         std::cout << "Out path: " << fifoPathOut << std::endl;
 
         std::cout << "Waiting on input FIFO..." << std::endl;
-        std::ifstream fifoIn(fifoPathIn);
+        fifoIn.open(fifoPathIn);
         if (!fifoIn.is_open()) {
             std::cerr << "Failed to open input FIFO: "+fifoPathIn << std::endl;
-            return 1;
+            return;
         }
         else{
             std::cout << "Opened Input FIFO" << std::endl;
         }
         
         std::cout << "Waiting on output FIFO..." << std::endl;
-        std::ofstream fifoOut(fifoPathOut, std::ofstream::out);
+        fifoOut.open(fifoPathOut, std::ofstream::out);
         if (!fifoOut.is_open()) { // check if the file is open
             std::cerr << "Failed to open output File: "+fifoPathOut << std::endl;
-            return 1;
+            return;
         }
         else{
             std::cout << "Opened Output FIFO" << std::endl;
         }
 
-        initialize();
-        
-        std::string line;
-        bool run = true;
-        int i;
-        while(run){
-            // Read loop
-            while (getline_async(fifoIn, line)) {
-                std::cout << "Received message: " << line << std::endl;
-                // std::vector<std::string> split = splitLine(line);
-                // if(split.size() == 0){
-                //     std::cout << "Error: Bad Input" << std::endl;
-                //     continue;
-                // }
-                //std::string pinName = split[0];
-                // Ensure we have a valid device
-                // if(!deviceExists(pinName)){
-                //     std::cout << "Error: Bad pinName" << std::endl;
-                //     std::cout << pinName << std::endl;
-                //     continue;
-                // }
-                // Val will be -1 if unset
-                if(line.size()>pinsW.size()){
-                    std::cerr << "Input too long" << std::endl;
-                    continue;
-                }
-                if(line.size()<1){
-                    std::cerr << "Input too short" << std::endl;
-                    continue;
-                }
-                for(int i = 0; i < line.size(); i++){
-                    //int valInt = std::stoi(c);
-                    char ch = line[i];
-                    // Check if we have an ignore
-                    if(ch == '-'){
-                        continue;
-                    }
-                    int valInt = int(ch) - 48;// ctoi
-                    // Check if we have a bool
-                    if(valInt == 0 || valInt == 1){
-                        pinsW[i]->set((bool)valInt);
-                    }
-                    else{
-                        // run special setup
-                        // if(pwm){
-                        //     led.set((i & 1) != 0);
-                        //     i++;
-                        //     usleep(pwm);//microseconds
-                        // }
-                    }
-                }
-            }
-            //
-            // Read mode
-            //
-            std::string readOut;
-            bool valChanged = false;
-            for (int i = 0; i < pinsR.size(); i++) {
-                int pinStateCache = pinsR[i]->getState();
-                int pinVal = pinsR[i]->get();// Not a bool!
-                std::string pinString = std::to_string(pinVal);
-                readOut+=pinString;
-                if(pinStateCache != pinVal){
-                    // We have a new value
-                    valChanged = true;
-                }
-            }
-            // Only write when we have new values
-            if(valChanged){
-                fifoOut << readOut << std::endl; // write the string to the file
-                std::cout << readOut << std::endl;
-            }
-        }
-        close(&fifoIn, &fifoOut);
-        return 0;
-    }
-private:
-    void initialize(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Opening GPIO Device: " << i << std::endl;
             pinsW[i]->open();
@@ -173,7 +78,99 @@ private:
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
-    void close(std::ifstream * fifoIn,std::ofstream * fifoOut){
+
+    void addDevice(GPIO * gpio, bool writeMode){
+        if(writeMode){
+            std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
+            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
+            pinsW.push_back(gpio);
+        }
+        else{
+            std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
+            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
+            pinsR.push_back(gpio);
+        }
+    }
+
+    int watch(){
+        bool run = true;
+        while(run){
+            writePins();
+            readPins();
+        }
+        close();
+        return 0;
+    }
+private:
+    void writePins(){
+        // Read loop
+        std::string line;
+        while (getline_async(fifoIn, line)) {
+            std::cout << "Received message: " << line << std::endl;
+            // std::vector<std::string> split = splitLine(line);
+            // if(split.size() == 0){
+            //     std::cout << "Error: Bad Input" << std::endl;
+            //     continue;
+            // }
+            //std::string pinName = split[0];
+            // Ensure we have a valid device
+            // if(!deviceExists(pinName)){
+            //     std::cout << "Error: Bad pinName" << std::endl;
+            //     std::cout << pinName << std::endl;
+            //     continue;
+            // }
+            // Val will be -1 if unset
+            if(line.size()>pinsW.size()){
+                std::cerr << "Input too long" << std::endl;
+                continue;
+            }
+            if(line.size()<1){
+                std::cerr << "Input too short" << std::endl;
+                continue;
+            }
+            for(int i = 0; i < line.size(); i++){
+                //int valInt = std::stoi(c);
+                char ch = line[i];
+                // Check if we have an ignore
+                if(ch == '-'){
+                    continue;
+                }
+                int valInt = int(ch) - 48;// ctoi
+                // Check if we have a bool
+                if(valInt == 0 || valInt == 1){
+                    pinsW[i]->set((bool)valInt);
+                }
+                else{
+                    // run special setup
+                    // if(pwm){
+                    //     led.set((i & 1) != 0);
+                    //     i++;
+                    //     usleep(pwm);//microseconds
+                    // }
+                }
+            }
+        }
+    } 
+    void readPins(){
+        std::string readOut;
+        bool valChanged = false;
+        for (int i = 0; i < pinsR.size(); i++) {
+            int pinStateCache = pinsR[i]->getState();
+            int pinVal = pinsR[i]->get();// Not a bool!
+            std::string pinString = std::to_string(pinVal);
+            readOut+=pinString;
+            if(pinStateCache != pinVal){
+                // We have a new value
+                valChanged = true;
+            }
+        }
+        // Only write when we have new values
+        if(valChanged){
+            fifoOut << readOut << std::endl; // write the string to the file
+            std::cout << readOut << std::endl;
+        }
+    }
+    void close(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
             pinsW[i]->release();
@@ -182,8 +179,8 @@ private:
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
             pinsR[i]->release();
         }
-        fifoIn->close();
-        fifoOut->close(); // close the file
+        fifoIn.close();
+        fifoOut.close(); // close the file
     }
     // Deprecated
     // bool deviceExists(std::string pinName){
@@ -244,9 +241,8 @@ private:
 
         return tokens;
     }
-
-    //std::map<std::string, GPIOMeta> pinsR = {};
-    //std::map<std::string, GPIOMeta> pinsW = {};
+    std::ifstream fifoIn;
+    std::ofstream fifoOut;
     std::vector<GPIO*> pinsR = {};
     std::vector<GPIO*> pinsW = {};
 };
@@ -255,7 +251,7 @@ int main(int argc, char **argv)
 {
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
-  IPCWatcher watcher;
+  IPCWatcher watcher("/tmp/pgpio");
 
   GPIO c1l91("gpiochip1", 91);
   GPIO c1l93("gpiochip1", 93);
@@ -267,6 +263,7 @@ int main(int argc, char **argv)
   watcher.addDevice(&c1l98, true);
   watcher.addDevice(&c1l93, false);
   watcher.addDevice(&c1l94, false);
-  watcher.start("/tmp/pgpio");
+
+  watcher.watch();
   return 0;
 }

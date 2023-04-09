@@ -37,8 +37,14 @@ public:
         state = val;
         return val;
     }
-    virtual int getState(){
+    int getState(){
         return state;
+    }
+    std::string getChipName(){
+        return chipName;
+    }
+    int getLineNum(){
+        return lineNum;
     }
     void log(std::string msg){
         std::cout << "---------------------------" << std::endl;
