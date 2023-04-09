@@ -5,6 +5,12 @@ class GPIO{
         this._fifoPathIn = '/tmp/pgpio-in';
         this._fifoPathOut = '/tmp/pgpio-out';
         this._writer = fs.createWriteStream(this._fifoPathIn);
+        // Watch for process termination
+        process.on('SIGINT', function() {
+            console.log("Caught interrupt signal");
+            gpio.close();
+            process.exit();
+        });
     }
     add(chipName, lineNumber, writeMode='r'){
         this._writer.write(`${chipName} ${lineNumber} ${writeMode}\n`);
