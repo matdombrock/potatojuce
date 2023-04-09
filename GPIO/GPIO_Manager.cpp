@@ -176,11 +176,11 @@ private:
     void close(std::ifstream * fifoIn,std::ofstream * fifoOut){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
-            pinsW[i].release();
+            pinsW[i]->release();
         }
         for (int i = 0; i < pinsR.size(); i++) {
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
-            pinsR[i].release();
+            pinsR[i]->release();
         }
         fifoIn->close();
         fifoOut->close(); // close the file
