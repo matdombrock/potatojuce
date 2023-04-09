@@ -21,8 +21,8 @@ class GPIO{
     setAll(bitString){
         this._writer.write(bitString+'\n');
     }
-    pwm(pinIndex, value){
-        this._writer.write(`pwm ${pinIndex} ${value}\n`);
+    pwm(pinIndex, usecs){
+        this._writer.write(`pwm ${pinIndex} ${usecs}\n`);
     }
     close(){
         this._writer.end();
