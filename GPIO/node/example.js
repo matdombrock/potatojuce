@@ -2,5 +2,12 @@ import GPIO from './index.js';
 
 const gpio = new GPIO();
 
-gpio.setAll('11');
+let i = 0;
+setTimeout(blink, 500);
+function blink(){
+    const val = i % 1 ? '11' : '00';
+    gpio.setAll(val);
+}
+
+
 //gpio.set(0, 1);
