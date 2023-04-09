@@ -15,27 +15,6 @@
 #include <string>
 #include <unistd.h>
 
-// Maybe move all of the meta up into the NodeJS code
-// class GPIOMeta : public GPIO{
-// public:
-//     GPIOMeta(const char* newChipName, int newLineNum, bool newWriteMode) 
-//         : GPIO(newChipName, newLineNum)
-//     {
-//         writeMode = newWriteMode;
-//     }
-//     void set(bool val) override{
-//         gpiod_line_set_value(lineLED, val);
-//         state = 0;
-//     }
-//     bool get() override{
-//         state = gpiod_line_get_value(lineLED);
-//         return state;
-//     }
-//     int state = 0;
-//     bool writeMode = false;
-// private:
-// };
-
 class IPCWatcher{
 public:
     IPCWatcher(std::string newFifoPath="/tmp/pgpio"){
@@ -100,19 +79,30 @@ private:
         std::string line;
         while (getline_async(fifoIn, line)) {
             std::cout << "Received message: " << line << std::endl;
-            // std::vector<std::string> split = splitLine(line);
-            // if(split.size() == 0){
-            //     std::cout << "Error: Bad Input" << std::endl;
-            //     continue;
-            // }
-            //std::string pinName = split[0];
-            // Ensure we have a valid device
-            // if(!deviceExists(pinName)){
-            //     std::cout << "Error: Bad pinName" << std::endl;
-            //     std::cout << pinName << std::endl;
-            //     continue;
-            // }
-            // Val will be -1 if unset
+
+            // See if we have a command
+            std::vector<std::string> split = splitLine(line);
+            if(split.size() >= 2){
+                // We have a command
+                std::string cmd = split[0];
+                int pinIndex = std::stoi(split[1]);
+                int pinVal = std::stoi(split[2]);
+                // Verify index exists
+                if(pinsW.size() < pinIndex){
+                    // This index doesnt exist
+                    std::cout << "Error: unknown write pin: " << pinIndex << std::endl;
+                    continue;
+                }
+                if(cmd == "set"){
+                    pinsW[pinIndex]->set((bool)pinVal);
+                }
+                else if(cmd == "pwm"){
+                    // Not implemented
+                }
+                else{
+                    std::cout << "Error: unknown cmd: " << cmd << std::endl;
+                }
+            }
             if(line.size()>pinsW.size()){
                 std::cerr << "Input too long" << std::endl;
                 continue;
@@ -121,6 +111,7 @@ private:
                 std::cerr << "Input too short" << std::endl;
                 continue;
             }
+            // Process serial input
             for(int i = 0; i < line.size(); i++){
                 //int valInt = std::stoi(c);
                 char ch = line[i];
@@ -134,16 +125,13 @@ private:
                     pinsW[i]->set((bool)valInt);
                 }
                 else{
-                    // run special setup
-                    // if(pwm){
-                    //     led.set((i & 1) != 0);
-                    //     i++;
-                    //     usleep(pwm);//microseconds
-                    // }
+                    std::cout << "Errror: All pins must be set to a bit value (bool)!" << std::endl;
+                    continue;
                 }
             }
         }
     } 
+
     void readPins(){
         std::string readOut;
         bool valChanged = false;
@@ -188,28 +176,6 @@ private:
         fifoIn.close();
         fifoOut.close(); // close the file
     }
-    // Deprecated
-    // bool deviceExists(std::string pinName){
-    //     if(pinsR.count(pinName)){
-    //         return true;
-    //     }
-    //     if(pinsW.count(pinName)){
-    //         return true;
-    //     }
-    //     return false;
-    // }
-    // Deprecated
-    // bool isWriteMode(std::string pinName){
-    //     if(pinsR.count(pinName)){
-    //         return false;
-    //     }
-    //     if(pinsW.count(pinName)){
-    //         return true;
-    //     }
-    //     std::cout << "Error: Pin not open";
-    //     // Default to read
-    //     return false;
-    // }
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
         static std::string lineSoFar;
@@ -232,6 +198,7 @@ private:
         } while (charsRead != 0 && !lineRead);
         return lineRead;
     }
+    // Split a line by space
     static std::vector<std::string> splitLine(std::string str) {
         std::vector<std::string> tokens;
         std::stringstream ss(str);
@@ -273,3 +240,27 @@ int main(int argc, char **argv)
   watcher.watch();
   return 0;
 }
+
+
+// Deprecated
+// bool deviceExists(std::string pinName){
+//     if(pinsR.count(pinName)){
+//         return true;
+//     }
+//     if(pinsW.count(pinName)){
+//         return true;
+//     }
+//     return false;
+// }
+// Deprecated
+// bool isWriteMode(std::string pinName){
+//     if(pinsR.count(pinName)){
+//         return false;
+//     }
+//     if(pinsW.count(pinName)){
+//         return true;
+//     }
+//     std::cout << "Error: Pin not open";
+//     // Default to read
+//     return false;
+// }
