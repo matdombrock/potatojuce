@@ -37,7 +37,7 @@ private:
 
 class IPCWatcher{
 public:
-    void addDevice(, const char* newChipName, int newLineNum, bool writeMode){
+    void addDevice(const char* newChipName, int newLineNum, bool writeMode){
         if(writeMode){
             std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl;  
