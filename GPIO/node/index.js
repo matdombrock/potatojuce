@@ -4,7 +4,7 @@ class GPIO{
     constructor(){
         this._fifoPathIn = '/tmp/pgpio-in';
         this._fifoPathOut = '/tmp/pgpio-out';
-        this._writer = fs.createWriteStream(PIPE_NAME);
+        this._writer = fs.createWriteStream(this._fifoPathIn);
     }
     add(chipName, lineNumber, writeMode='r'){
         this._writer.write(`${chipName} ${lineNumber} ${writeMode}`);
