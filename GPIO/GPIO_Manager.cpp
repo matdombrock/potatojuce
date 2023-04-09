@@ -37,16 +37,16 @@ private:
 
 class IPCWatcher{
 public:
-    void addDevice(std::string name, const char* newChipName, int newLineNum, bool writeMode){
+    void addDevice(, const char* newChipName, int newLineNum, bool writeMode){
         if(writeMode){
             std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW.push_back(GPIOMeta(name, newChipName, newLineNum, writeMode));
+            pinsW.push_back(GPIOMeta(newChipName, newLineNum, writeMode));
         }
         else{
             std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
             std::cout << newChipName << " " << newLineNum << std::endl; 
-            pinsR.push_back(GPIOMeta(name, newChipName, newLineNum, writeMode));
+            pinsR.push_back(GPIOMeta(newChipName, newLineNum, writeMode));
         }
     }
     int start(std::string newFifoPath="/tmp/pgpio"){
