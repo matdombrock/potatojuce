@@ -9,10 +9,10 @@ class GPIO{
     add(chipName, lineNumber, writeMode='r'){
         this._writer.write(`${chipName} ${lineNumber} ${writeMode}`);
     }
-    write(pinIndex, value){
+    set(pinIndex, value){
         this._writer.write(`set ${pinIndex} ${value}`);
     }
-    writeAll(bitString){
+    setAll(bitString){
         this._writer.write(bitString);
     }
     pwm(pinIndex, value){
