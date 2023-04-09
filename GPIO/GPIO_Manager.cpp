@@ -165,11 +165,11 @@ private:
     void initialize(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Opening GPIO Device: " << i << std::endl;
-            pinsW[i].open();
+            pinsW[i]->open();
         }
         for (int i = 0; i < pinsR.size(); i++) {
             std::cout <<"Opening GPIO Device: " << i << std::endl;
-            pinsR[i].open();
+            pinsR[i]->open();
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
