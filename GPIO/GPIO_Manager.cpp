@@ -16,25 +16,25 @@
 #include <unistd.h>
 
 // Maybe move all of the meta up into the NodeJS code
-class GPIOMeta : public GPIO{
-public:
-    GPIOMeta(const char* newChipName, int newLineNum, bool newWriteMode) 
-        : GPIO(newChipName, newLineNum)
-    {
-        writeMode = newWriteMode;
-    }
-    void set(bool val) override{
-        gpiod_line_set_value(lineLED, val);
-        state = 0;
-    }
-    bool get() override{
-        state = gpiod_line_get_value(lineLED);
-        return state;
-    }
-    int state = 0;
-    bool writeMode = false;
-private:
-};
+// class GPIOMeta : public GPIO{
+// public:
+//     GPIOMeta(const char* newChipName, int newLineNum, bool newWriteMode) 
+//         : GPIO(newChipName, newLineNum)
+//     {
+//         writeMode = newWriteMode;
+//     }
+//     void set(bool val) override{
+//         gpiod_line_set_value(lineLED, val);
+//         state = 0;
+//     }
+//     bool get() override{
+//         state = gpiod_line_get_value(lineLED);
+//         return state;
+//     }
+//     int state = 0;
+//     bool writeMode = false;
+// private:
+// };
 
 class IPCWatcher{
 public:
@@ -43,16 +43,16 @@ public:
     // So I need to register all possible GPIO pins
     // And let the Node user decide which to use
     // Setting some for read and some for write
-    void addDevice(const char* newChipName, int newLineNum, bool writeMode){
+    void addDevice(GPIO * gpio, bool writeMode){
         if(writeMode){
             std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
-            std::cout << newChipName << " " << newLineNum << std::endl;  
-            pinsW.push_back(GPIOMeta(newChipName, newLineNum, writeMode));
+            //std::cout << newChipName << " " << newLineNum << std::endl;  
+            pinsW.push_back(gpio);
         }
         else{
             std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
-            std::cout << newChipName << " " << newLineNum << std::endl; 
-            pinsR.push_back(GPIOMeta(newChipName, newLineNum, writeMode));
+            //std::cout << newChipName << " " << newLineNum << std::endl; 
+            pinsR.push_back(gpio);
         }
     }
     int start(std::string newFifoPath="/tmp/pgpio"){
@@ -125,7 +125,7 @@ public:
                     int valInt = int(ch) - 48;// ctoi
                     // Check if we have a bool
                     if(valInt == 0 || valInt == 1){
-                        pinsW[i].set((bool)valInt);
+                        pinsW[i]->set((bool)valInt);
                     }
                     else{
                         // run special setup
@@ -144,7 +144,7 @@ public:
             bool valChanged = false;
             for (int i = 0; i < pinsR.size(); i++) {
                 int pinStateCache = pinsR[i].state;
-                int pinVal = pinsR[i].get();// Not a bool!
+                int pinVal = pinsR[i]->get();// Not a bool!
                 std::string pinString = std::to_string(pinVal);
                 readOut+=pinString;
                 if(pinStateCache != pinVal){
@@ -247,8 +247,8 @@ private:
 
     //std::map<std::string, GPIOMeta> pinsR = {};
     //std::map<std::string, GPIOMeta> pinsW = {};
-    std::vector<GPIOMeta> pinsR = {};
-    std::vector<GPIOMeta> pinsW = {};
+    std::vector<GPIO*> pinsR = {};
+    std::vector<GPIO*> pinsW = {};
 };
 
 int main(int argc, char **argv)
@@ -256,11 +256,17 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
+
+  GPIO c1l91("gpiochip1", 91);
+  GPIO c1l93("gpiochip1", 93);
+  GPIO c1l94("gpiochip1", 94);
+  GPIO c1l98("gpiochip1", 98);
+  
   // chip name, line number, writeMode
-  watcher.addDevice("gpiochip1", 91, true);
-  watcher.addDevice("gpiochip1", 98, true);
-  watcher.addDevice("gpiochip1", 93, false);
-  watcher.addDevice("gpiochip1", 94, false);
+  watcher.addDevice(c1l91, true);
+  watcher.addDevice(c1l98, true);
+  watcher.addDevice(c1l93, false);
+  watcher.addDevice(c1l94, false);
   watcher.start("/tmp/pgpio");
   return 0;
 }
