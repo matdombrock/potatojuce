@@ -8,7 +8,7 @@ class GPIO{
         // Watch for process termination
         process.on('SIGINT', function() {
             console.log("Caught interrupt signal");
-            gpio.close();
+            this.close();
             process.exit();
         });
     }

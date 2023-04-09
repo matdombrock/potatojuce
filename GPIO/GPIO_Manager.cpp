@@ -85,6 +85,7 @@ public:
     int watch(){
         std::cout << "Starting watcher..." << std::endl;
         open();
+        std::cout << "Listening for messages..." << std::endl;
         bool run = true;
         while(run){
             writePins();
