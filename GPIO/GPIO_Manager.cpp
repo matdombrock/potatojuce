@@ -15,6 +15,7 @@
 #include <string>
 #include <unistd.h>
 
+// Maybe move all of the meta up into the NodeJS code
 class GPIOMeta : public GPIO{
 public:
     GPIOMeta(const char* newChipName, int newLineNum, bool newWriteMode) 
@@ -37,6 +38,11 @@ private:
 
 class IPCWatcher{
 public:
+    // Getting add to work from NODE:
+    // Add needs a constant
+    // So I need to register all possible GPIO pins
+    // And let the Node user decide which to use
+    // Setting some for read and some for write
     void addDevice(const char* newChipName, int newLineNum, bool writeMode){
         if(writeMode){
             std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
