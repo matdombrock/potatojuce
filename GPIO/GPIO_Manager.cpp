@@ -67,16 +67,6 @@ public:
         else{
             std::cout << "Opened Output FIFO" << std::endl;
         }
-
-        for (int i = 0; i < pinsW.size(); i++) {
-            std::cout <<"Opening GPIO Device: " << i << std::endl;
-            pinsW[i]->open();
-        }
-        for (int i = 0; i < pinsR.size(); i++) {
-            std::cout <<"Opening GPIO Device: " << i << std::endl;
-            pinsR[i]->open();
-        }
-        std::cout <<"Opened all GPIO Devices" << std::endl;
     }
 
     void addDevice(GPIO * gpio, bool writeMode){
@@ -93,6 +83,8 @@ public:
     }
 
     int watch(){
+        std::cout << "Starting watcher..." << std::endl;
+        open();
         bool run = true;
         while(run){
             writePins();
@@ -170,6 +162,19 @@ private:
             std::cout << readOut << std::endl;
         }
     }
+
+    void open(){
+        for (int i = 0; i < pinsW.size(); i++) {
+            std::cout <<"Opening GPIO Device: " << i << std::endl;
+            pinsW[i]->open();
+        }
+        for (int i = 0; i < pinsR.size(); i++) {
+            std::cout <<"Opening GPIO Device: " << i << std::endl;
+            pinsR[i]->open();
+        }
+        std::cout <<"Opened all GPIO Devices" << std::endl;
+    }
+
     void close(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
