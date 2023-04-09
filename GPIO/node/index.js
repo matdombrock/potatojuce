@@ -13,7 +13,7 @@ class GPIO{
         this._writer.write(`set ${pinIndex} ${value}`);
     }
     setAll(bitString){
-        this._writer.write(bitString);
+        this._writer.write(bitString+'\n');
     }
     pwm(pinIndex, value){
         this._writer.write(`pwm ${pinIndex} ${value}`);
