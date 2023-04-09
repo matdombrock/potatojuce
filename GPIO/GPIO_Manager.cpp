@@ -17,10 +17,9 @@
 
 class GPIOMeta : public GPIO{
 public:
-    GPIOMeta(std::string newName, const char* newChipName, int newLineNum, bool newWriteMode) 
+    GPIOMeta(const char* newChipName, int newLineNum, bool newWriteMode) 
         : GPIO(newChipName, newLineNum)
     {
-        name = newName;
         writeMode = newWriteMode;
     }
     void set(bool val) override{
@@ -32,7 +31,6 @@ public:
         return state;
     }
     int state = 0;
-    std::string name;
     bool writeMode = false;
 private:
 };
@@ -114,6 +112,10 @@ public:
                 for(int i = 0; i < line.size(); i++){
                     //int valInt = std::stoi(c);
                     char ch = line[i];
+                    // Check if we have an ignore
+                    if(ch == '-'){
+                        continue;
+                    }
                     int valInt = int(ch) - 48;// ctoi
                     // Check if we have a bool
                     if(valInt == 0 || valInt == 1){
@@ -248,10 +250,11 @@ int main(int argc, char **argv)
   std::cout << "Starting LED Driver Manager" << std::endl;
   std::cout << "===========================" << std::endl;
   IPCWatcher watcher;
-  watcher.addDevice("led1", "gpiochip1", 91, true);// chip name, line number
-  watcher.addDevice("led2", "gpiochip1", 98, true);// chip name, line number
-  watcher.addDevice("read1", "gpiochip1", 93, false);// chip name, line number
-  watcher.addDevice("read2", "gpiochip1", 94, false);// chip name, line number
+  // chip name, line number, writeMode
+  watcher.addDevice("gpiochip1", 91, true);
+  watcher.addDevice("gpiochip1", 98, true);
+  watcher.addDevice("gpiochip1", 93, false);
+  watcher.addDevice("gpiochip1", 94, false);
   watcher.start("/tmp/pgpio");
   return 0;
 }
