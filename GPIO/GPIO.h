@@ -30,9 +30,15 @@ public:
     }
     virtual void set(bool val){
         gpiod_line_set_value(lineLED, val);
+        state = val;
     }
     virtual bool get(){
-        return gpiod_line_get_value(lineLED);
+        bool val = gpiod_line_get_value(lineLED);
+        state = val;
+        return val;
+    }
+    virtual int getState(){
+        return state;
     }
     void log(std::string msg){
         std::cout << "---------------------------" << std::endl;
@@ -43,6 +49,7 @@ public:
     } 
     const char *chipName;
     int lineNum = 0; 
+    int state = 0;// Cache the pin state
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
 private:

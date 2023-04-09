@@ -143,7 +143,7 @@ public:
             std::string readOut;
             bool valChanged = false;
             for (int i = 0; i < pinsR.size(); i++) {
-                int pinStateCache = pinsR[i].state;
+                int pinStateCache = pinsR[i]->getState();
                 int pinVal = pinsR[i]->get();// Not a bool!
                 std::string pinString = std::to_string(pinVal);
                 readOut+=pinString;
