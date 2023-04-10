@@ -76,7 +76,7 @@ You can also tell a pin to keep its current state with a `-`:
 This would set the second pin to LOW and keep the other pins as they were. 
 
 ## Writing a Single Pin (Set):
-**NOT YET IMPLEMENTED**
+
 You can also set a single GPIO pin with this syntax:
 ```
 set <pinWriteIndex> <value>
