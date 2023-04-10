@@ -1,3 +1,4 @@
+#pragma once
 #include "GPIO.h"
 
 class LED{

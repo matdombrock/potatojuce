@@ -1,7 +1,7 @@
 /*
     This is basically just a wrapper for gpiod
 */
-
+#pragma once
 #include <gpiod.h>
 #include <stdio.h>
 #include <iostream>
