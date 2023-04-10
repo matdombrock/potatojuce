@@ -117,12 +117,19 @@ private:
             //bool val = (iteration & 1) != 0;
             gpiod_line_set_value(lineLED, 1);
             int fullCycle = 100;
+            
+            // Temp values with scaling
             int fullCycleT = fullCycle * 100;
             int dutyT = duty * 100;
+            
+            // Sleep for duty time
             usleep(dutyT);
+
             gpiod_line_set_value(lineLED, 0);
+            
+            // Sleep for rest time
             usleep(fullCycleT - duty);
-            iteration++;
+            iteration++;// Not used?
             continue;
         }
     }
