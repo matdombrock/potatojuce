@@ -257,12 +257,6 @@ private:
     std::ofstream fifoOut;
     std::vector<GPIO*> pinsR = {};
     std::vector<GPIO*> pinsW = {};
-    // std::vector<GPIO> pinsM = {
-    //     GPIO("gpiochip1", 91),
-    //     GPIO("gpiochip1", 93),
-    //     GPIO("gpiochip1", 94),
-    //     GPIO("gpiochip1", 98),
-    // };
 };
 
 int main(int argc, char **argv)
