@@ -80,7 +80,7 @@ private:
                     // we should treat it as a blink
                     // which is based on time stamps
                     // and not on sleeps
-                    pinsR[pinIndex]->pwm(pinVal);
+                    pinsW[pinIndex]->pwm(pinVal);
                     continue;
                 }
                 else{
