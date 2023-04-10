@@ -24,7 +24,7 @@ public:
         gpioDT.open();
         gpioCLK.open();
         // Start loop
-        std::cout << "Starting Thread" << std::endl;
+        std::cout << "Starting Read Thread" << std::endl;
         m_readThread = std::thread(&Rotary::readThreadFunc, this);
         // Join the threads so main doesnt die
         //m_readThread.join();
@@ -60,8 +60,9 @@ private:
         bool wasHit = false;
         int64_t ts;
         char lastDir = 'n';
-        std::cout << "Enter Thread Loop" << std::endl;
+        std::cout << "Enter Read Thread Loop" << std::endl;
         while(m_readThreadRunning){
+            usleep(1000);// Optimization
             std::unique_lock<std::mutex> lock(m_messageQueueMutex);
             if (!m_messageQueue.empty()) {
                 m_messageQueueCV.wait(lock, [this] { return !m_messageQueue.empty(); });
@@ -120,7 +121,7 @@ private:
                 wasHit = false;
                 continue;
             }
-            //usleep(1000);
+            
             //std::cout << outQueue << std::endl;
         }
     }
