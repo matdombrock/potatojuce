@@ -12,7 +12,7 @@ int main(int argc, char **argv)
         led.set(state);
         led.set(!state);
         std::cout << state << std::endl;
-        sleep(500);
+        sleep(1);
     }
     return 0;
 }

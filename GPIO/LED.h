@@ -4,7 +4,12 @@ class LED{
 public:
     LED(const char* newChipName="gpiochip1", int newLineNum=98) 
     : gpio(newChipName, newLineNum)
-    {}
+    {
+        gpio.open();
+    }
+    ~LED(){
+        gpio.release();
+    }
     void on(){
         gpio.set(1);
     }
