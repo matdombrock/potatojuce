@@ -18,6 +18,7 @@ int main(int argc, char **argv)
 
     int lr = 0;
     while(true){
+        usleep(1000);// Optimization
         std::string rotRead = rot.read();
         if(rotRead.size() == 0){
             continue;
@@ -39,7 +40,6 @@ int main(int argc, char **argv)
             led2.pwm(-lr);
             led.off();
         }
-        usleep(10000);
     }
 
     // for(int i = 0; i < 4; i++){
