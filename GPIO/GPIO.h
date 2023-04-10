@@ -54,7 +54,7 @@ public:
             m_pwmThreadRunning = false;
         }
         // Lock the mutex before accessing the message queue
-        std::unique_lock<std::mutex> lock(m_messageQueueMutex):
+        std::unique_lock<std::mutex> lock(m_messageQueueMutex);
         // Add the message to the queue
         std::string message = std::to_string(usecs);
         m_messageQueue.push(message);
