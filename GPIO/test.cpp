@@ -11,6 +11,8 @@ int main(int argc, char **argv)
         bool state = i % 2;
         led.set(state);
         led.set(!state);
+        std::cout << state << std::endl;
+        std::sleep(500);
     }
     return 0;
 }
