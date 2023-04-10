@@ -46,11 +46,13 @@ public:
     }
     void pwm(int usecs){
         if(pwmEnabled == false){
+            log("Starting PWM Thread");
             pwmEnabled = true;
             m_pwmThreadRunning = true;
             m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
         }
         if(usecs == 0){
+            log("Stopping PWM Thread");
             pwmEnabled = false;
             m_pwmThreadRunning = false;
         }
@@ -106,7 +108,6 @@ private:
                 pwmUSecs = std::stoi(message);
             }
             // Release the lock and continue the loop
-            std::cout << "LOOP" << std::endl;
             lock.unlock();
             //std::this_thread::yield();
             set((iteration & 1) != 0);
