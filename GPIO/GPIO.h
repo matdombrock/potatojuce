@@ -5,7 +5,10 @@
 #include <gpiod.h>
 #include <stdio.h>
 #include <iostream>
-
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <queue>
 
 class GPIO{
 public:
@@ -40,6 +43,24 @@ public:
     int getState(){
         return state;
     }
+    void pwm(int usecs){
+        if(pwmEnabled == false){
+            pwmEnabled = true;
+            m_pwmThreadRunning = true;
+            m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
+        }
+        if(usecs == 0){
+            pwmEnabled = false;
+            m_pwmThreadRunning = false;
+        }
+        // Lock the mutex before accessing the message queue
+        std::unique_lock<std::mutex> lock(m_messageQueueMutex):
+        // Add the message to the queue
+        std::string message = std::to_string(usecs);
+        m_messageQueue.push(message);
+        // Notify the PWM thread that there's a new message
+        m_messageQueueCV.notify_one();
+    }
     std::string getChipName(){
         return chipName;
     }
@@ -58,6 +79,36 @@ public:
     int state = 0;// Cache the pin state
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
+    bool pwmEnabled = false;
+    bool m_pwmThreadRunning = false;
+    std::thread m_pwmThread;
+    std::queue<std::string> m_messageQueue;
+    std::mutex m_messageQueueMutex;
+    std::condition_variable m_messageQueueCV;
 private:
-    
+    void pwmThreadFunc(){
+        int pwmUSecs = 0;
+        while(m_pwmThreadRunning){
+            std::unique_lock<std::mutex> lock(m_messageQueueMutex);
+            if (!m_messageQueue.empty()) {
+                m_messageQueueCV.wait(lock, [this] { return !m_messageQueue.empty(); });
+                // Get the next message from the queue
+                std::string message = m_messageQueue.front();
+                m_messageQueue.pop();
+                // Process the message
+                std::cout << "Received PWM message: " << message << std::endl;
+                if(message == "0"){
+                    // Sending 0 will stop the PWM
+                    return;
+                }
+                pwmUSecs = std::stoi(message);
+            }
+            // Release the lock and continue the loop
+            std::cout << "LOOP" << std::endl;
+            lock.unlock();
+            //std::this_thread::yield();
+            usleep(pwmUSecs);
+            continue;
+        }
+    }
 };

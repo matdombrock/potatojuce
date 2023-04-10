@@ -80,6 +80,7 @@ private:
                     // we should treat it as a blink
                     // which is based on time stamps
                     // and not on sleeps
+                    pinsR->pwm(pinVal);
                     continue;
                 }
                 else{
@@ -117,9 +118,9 @@ private:
         }
         // Done with input
         // PWM
-        set(0, (iteration & 1) != 0);
-        usleep(1000);
-        iteration++;
+        //set(0, (iteration & 1) != 0);
+        //usleep(1000);
+        //iteration++;
     } 
 
     // Handles FIFO output
@@ -254,7 +255,7 @@ private:
         return tokens;
     }
     std::string fifoPath;
-    int iteration = 0;
+    //int iteration = 0;
     std::ifstream fifoIn;
     std::ofstream fifoOut;
     std::vector<GPIO*> pinsR = {};

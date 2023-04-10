@@ -46,12 +46,11 @@ private:
             }
             else{
                 // Release the lock and continue the loop
-                std::cout << "EMPTY" << std::endl;
+                std::cout << "LOOP" << std::endl;
                 lock.unlock();
                 std::this_thread::yield();
                 continue;
             }
-            std::cout << "LOOP" << std::endl;
         }
     }
 
