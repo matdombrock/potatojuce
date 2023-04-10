@@ -33,6 +33,10 @@ public:
         gpiod_chip_close(chip);
     }
     virtual void set(bool val){
+        if(pwmEnabled){
+            // Stop PWM
+            pwm(0);
+        }
         gpiod_line_set_value(lineLED, val);
         state = val;
     }
@@ -45,16 +49,16 @@ public:
         return state;
     }
     void pwm(int usecs){
-        if(pwmEnabled == false){
-            log("Starting PWM Thread");
-            pwmEnabled = true;
-            m_pwmThreadRunning = true;
-            m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
-        }
         if(usecs == 0){
             log("Stopping PWM Thread");
             pwmEnabled = false;
             m_pwmThreadRunning = false;
+        }
+        else if(pwmEnabled == false){
+            log("Starting PWM Thread");
+            pwmEnabled = true;
+            m_pwmThreadRunning = true;
+            m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
         }
         // Lock the mutex before accessing the message queue
         std::unique_lock<std::mutex> lock(m_messageQueueMutex);
