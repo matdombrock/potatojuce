@@ -18,7 +18,133 @@ class IPCWatcher{
 public:
     IPCWatcher(std::string newFifoPath="/tmp/pgpio"){
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
+    }
 
+    void addDevice(GPIO * gpio, bool writeMode){
+        if(writeMode){
+            std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
+            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
+            pinsW.push_back(gpio);
+        }
+        else{
+            std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
+            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
+            pinsR.push_back(gpio);
+        }
+    }
+
+    // Statrt the main watcher loop
+    int watch(){
+        std::cout << "Starting watcher..." << std::endl;
+        openGPIO();
+        openFIFO();
+        std::cout << "Listening for messages..." << std::endl;
+        bool run = true;
+        while(run){
+            checkCmd();
+            processInput();
+            processOutput();
+        }
+        closeFIFO();
+        closeGPIO();
+        return 0;
+    }
+
+private:
+    // Handles reading FIFO input
+    // and writing data to pins
+    void processInput(){
+        // Read loop
+        std::string line;
+        while (getline_async(fifoIn, line)) {
+            std::cout << "Received message: " << line << std::endl;
+
+            // See if we have a command
+            std::vector<std::string> split = splitLine(line);
+            if(split.size() >= 2){
+                // We have a command
+                std::string cmd = split[0];
+                int pinIndex = std::stoi(split[1]);
+                int pinVal = std::stoi(split[2]);
+                if(cmd == "add"){
+                    //addDevice(&);
+                    continue;
+                }
+                if(cmd == "set"){
+                    set(pinIndex, (bool)pinVal);
+                    continue;
+                }
+                if(cmd == "pwm"){
+                    // Not implemented
+                    // If PWM is slower than 100ms
+                    // we should treat it as a blink
+                    // which is based on time stamps
+                    // and not on sleeps
+                    continue;
+                }
+                else{
+                    std::cout << "Error: unknown cmd: " << cmd << std::endl;
+                    continue;
+                }
+            }
+            // We have serial input
+            if(line.size()>pinsW.size()){
+                std::cerr << "Input too long" << std::endl;
+                continue;
+            }
+            if(line.size()<1){
+                std::cerr << "Input too short" << std::endl;
+                continue;
+            }
+            // Process serial input
+            for(int i = 0; i < line.size(); i++){
+                //int valInt = std::stoi(c);
+                char ch = line[i];
+                // Check if we have an ignore
+                if(ch == '-'){
+                    continue;
+                }
+                int valInt = int(ch) - 48;// ctoi
+                // Check if we have a bool
+                if(valInt == 0 || valInt == 1){
+                    set(i, (bool)valInt);
+                }
+                else{
+                    std::cout << "Errror: At index: " << i << ". All pins must be set to a bit value (bool)!" << std::endl;
+                    continue;
+                }
+            }
+            // PWM
+            set(0, (iteration & 1) != 0);
+            usleep(1000);
+
+            iteration++;
+        }
+    } 
+
+    // Handles FIFO output
+    // and reading data from pins
+    void processOutput(){
+        std::string readOut;
+        bool valChanged = false;
+        for (int i = 0; i < pinsR.size(); i++) {
+            int pinStateCache = pinsR[i]->getState();
+            int pinVal = pinsR[i]->get();// Not a bool!
+            std::string pinString = std::to_string(pinVal);
+            readOut+=pinString;
+            if(pinStateCache != pinVal){
+                // We have a new value
+                valChanged = true;
+            }
+        }
+        // Only write when we have new values
+        if(valChanged){
+            fifoOut << readOut << std::endl; // write the string to the file
+            std::cout << readOut << std::endl;
+        }
+    }
+
+    void openFIFO(){
         std::string fifoPathIn = newFifoPath + "-in";
         std::string fifoPathOut = newFifoPath + "-out";
 
@@ -46,116 +172,8 @@ public:
             std::cout << "Opened Output FIFO" << std::endl;
         }
     }
-
-    void addDevice(GPIO * gpio, bool writeMode){
-        if(writeMode){
-            std::cout << "Adding write pin: " << pinsW.size() + 1 << std::endl;
-            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
-            pinsW.push_back(gpio);
-        }
-        else{
-            std::cout << "Adding read pin: " << pinsR.size() + 1 << std::endl;
-            std::cout << gpio->getChipName() << " " << gpio->getLineNum() << std::endl;  
-            pinsR.push_back(gpio);
-        }
-    }
-
-    int watch(){
-        std::cout << "Starting watcher..." << std::endl;
-        open();
-        std::cout << "Listening for messages..." << std::endl;
-        bool run = true;
-        while(run){
-            writePins();
-            readPins();
-        }
-        close();
-        return 0;
-    }
-private:
-    void writePins(){
-        // Read loop
-        std::string line;
-        while (getline_async(fifoIn, line)) {
-            std::cout << "Received message: " << line << std::endl;
-
-            // See if we have a command
-            std::vector<std::string> split = splitLine(line);
-            if(split.size() >= 2){
-                // We have a command
-                std::string cmd = split[0];
-                int pinIndex = std::stoi(split[1]);
-                int pinVal = std::stoi(split[2]);
-                // Verify index exists
-                if(pinsW.size() < pinIndex){
-                    // This index doesnt exist
-                    std::cout << "Error: unknown write pin: " << pinIndex << std::endl;
-                    continue;
-                }
-                if(cmd == "set"){
-                    pinsW[pinIndex]->set((bool)pinVal);
-                }
-                else if(cmd == "pwm"){
-                    // Not implemented
-                    // If PWM is slower than 100ms
-                    // we should treat it as a blink
-                    // which is based on time stamps
-                    // and not on sleeps
-                }
-                else{
-                    std::cout << "Error: unknown cmd: " << cmd << std::endl;
-                }
-            }
-            if(line.size()>pinsW.size()){
-                std::cerr << "Input too long" << std::endl;
-                continue;
-            }
-            if(line.size()<1){
-                std::cerr << "Input too short" << std::endl;
-                continue;
-            }
-            // Process serial input
-            for(int i = 0; i < line.size(); i++){
-                //int valInt = std::stoi(c);
-                char ch = line[i];
-                // Check if we have an ignore
-                if(ch == '-'){
-                    continue;
-                }
-                int valInt = int(ch) - 48;// ctoi
-                // Check if we have a bool
-                if(valInt == 0 || valInt == 1){
-                    pinsW[i]->set((bool)valInt);
-                }
-                else{
-                    std::cout << "Errror: All pins must be set to a bit value (bool)!" << std::endl;
-                    continue;
-                }
-            }
-        }
-    } 
-
-    void readPins(){
-        std::string readOut;
-        bool valChanged = false;
-        for (int i = 0; i < pinsR.size(); i++) {
-            int pinStateCache = pinsR[i]->getState();
-            int pinVal = pinsR[i]->get();// Not a bool!
-            std::string pinString = std::to_string(pinVal);
-            readOut+=pinString;
-            if(pinStateCache != pinVal){
-                // We have a new value
-                valChanged = true;
-            }
-        }
-        // Only write when we have new values
-        if(valChanged){
-            fifoOut << readOut << std::endl; // write the string to the file
-            std::cout << readOut << std::endl;
-        }
-    }
-
-    void open(){
+    // Opens the GPIO pins for read/write
+    void openGPIO(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Opening GPIO Device: " << i << std::endl;
             pinsW[i]->open();
@@ -166,8 +184,15 @@ private:
         }
         std::cout <<"Opened all GPIO Devices" << std::endl;
     }
+    // Closes FIFO pipes
+    void closeFIFO(){
+        std::cout << "Closing FIFO Pipes" << std::endl;
+        fifoIn.close();
+        fifoOut.close();
+    }
 
-    void close(){
+    // Floses the GPIO pins
+    void closeGPIO(){
         for (int i = 0; i < pinsW.size(); i++) {
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
             pinsW[i]->release();
@@ -176,9 +201,19 @@ private:
             std::cout <<"Releasing GPIO Device: " << i << std::endl;
             pinsR[i]->release();
         }
-        fifoIn.close();
-        fifoOut.close(); // close the file
     }
+
+    // Wraps GPIO Set
+    void set(int pinIndex, bool val){
+        if(pinsW.size() >= pinIndex){
+            pinsW[pinIndex]->set(val);
+        }
+        else{
+            std::cout << "Error: unknown write pin: " << pinIndex << std::endl;
+        }
+    }
+    
+    // Reads line if available or continues instantly if not
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
         static std::string lineSoFar;
@@ -201,6 +236,7 @@ private:
         } while (charsRead != 0 && !lineRead);
         return lineRead;
     }
+    
     // Split a line by space
     static std::vector<std::string> splitLine(std::string str) {
         std::vector<std::string> tokens;
@@ -217,10 +253,17 @@ private:
 
         return tokens;
     }
+    int iteration = 0;
     std::ifstream fifoIn;
     std::ofstream fifoOut;
     std::vector<GPIO*> pinsR = {};
     std::vector<GPIO*> pinsW = {};
+    // std::vector<GPIO> pinsM = {
+    //     GPIO("gpiochip1", 91),
+    //     GPIO("gpiochip1", 93),
+    //     GPIO("gpiochip1", 94),
+    //     GPIO("gpiochip1", 98),
+    // };
 };
 
 int main(int argc, char **argv)
