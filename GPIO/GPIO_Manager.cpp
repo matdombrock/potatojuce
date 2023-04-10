@@ -17,6 +17,7 @@
 class IPCWatcher{
 public:
     IPCWatcher(std::string newFifoPath="/tmp/pgpio"){
+        fifoPath = newFifoPath;
         std::cout << "Starting IPC Watcher @ " + newFifoPath << std::endl;
     }
 
@@ -41,7 +42,6 @@ public:
         std::cout << "Listening for messages..." << std::endl;
         bool run = true;
         while(run){
-            checkCmd();
             processInput();
             processOutput();
         }
@@ -145,8 +145,8 @@ private:
     }
 
     void openFIFO(){
-        std::string fifoPathIn = newFifoPath + "-in";
-        std::string fifoPathOut = newFifoPath + "-out";
+        std::string fifoPathIn = fifoPath + "-in";
+        std::string fifoPathOut = fifoPath + "-out";
 
         std::cout << "Setting up IPC FIFO" << std::endl;
         std::cout << "In path: " << fifoPathIn << std::endl;
@@ -253,6 +253,7 @@ private:
 
         return tokens;
     }
+    std::string fifoPath;
     int iteration = 0;
     std::ifstream fifoIn;
     std::ofstream fifoOut;
