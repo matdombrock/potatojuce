@@ -9,6 +9,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <unistd.h>
 
 class GPIO{
 public:
