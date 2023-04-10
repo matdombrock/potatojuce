@@ -114,7 +114,8 @@ private:
             // Release the lock and continue the loop
             lock.unlock();
             //std::this_thread::yield();
-            set((iteration & 1) != 0);
+            bool val = (iteration & 1) != 0;
+            gpiod_line_set_value(lineLED, val);
             usleep(pwmUSecs);
             iteration++;
             continue;
