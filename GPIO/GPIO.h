@@ -32,14 +32,12 @@ public:
     void release(){
         log("Releasing GPIO");
         // Release lines and chip
+        pwmStop();
         gpiod_line_release(lineLED);
         gpiod_chip_close(chip);
     }
     virtual void set(bool val){
-        if(pwmEnabled){
-            // Stop PWM
-            pwm(0);
-        }
+        pwmStop();
         gpiod_line_set_value(lineLED, val);
         state = val;
     }
@@ -51,11 +49,8 @@ public:
     int getState(){
         return state;
     }
-    void pwm(int usecs){
-        if(usecs == 0){
-            pwmEnabled = false;
-        }
-        else if(pwmEnabled == false){
+    void pwm(int duty){
+        if(pwmEnabled == false){
             log("Starting PWM Thread");
             pwmEnabled = true;
             if(m_pwmThreadRunning == false){
@@ -66,10 +61,13 @@ public:
         // Lock the mutex before accessing the message queue
         std::unique_lock<std::mutex> lock(m_messageQueueMutex);
         // Add the message to the queue
-        std::string message = std::to_string(usecs);
+        std::string message = std::to_string(duty);
         m_messageQueue.push(message);
         // Notify the PWM thread that there's a new message
         m_messageQueueCV.notify_one();
+    }
+    void pwmStop(){
+        pwmEnabled = false;
     }
     std::string getChipName(){
         return chipName;
@@ -97,7 +95,7 @@ public:
     std::condition_variable m_messageQueueCV;
 private:
     void pwmThreadFunc(){
-        int pwmUSecs = 0;
+        int duty = 0;
         int iteration = 0;
         while(m_pwmThreadRunning){
             if(pwmEnabled == false){
@@ -111,20 +109,19 @@ private:
                 m_messageQueue.pop();
                 // Process the message
                 std::cout << "Received PWM message: " << message << std::endl;
-                if(message == "0"){
-                    // Double check that we stopped
-                    // doing PWM stuff
-                    pwmEnabled = false;
-                    continue;
-                }
-                pwmUSecs = std::stoi(message);
+                duty = std::stoi(message);
+                duty = duty <= 100 ? duty : 100;
             }
             // Release the lock and continue the loop
             lock.unlock();
-            //std::this_thread::yield();
-            bool val = (iteration & 1) != 0;
-            gpiod_line_set_value(lineLED, val);
-            usleep(pwmUSecs);
+            //bool val = (iteration & 1) != 0;
+            gpiod_line_set_value(lineLED, 1);
+            int fullCycle = 100;
+            int fullCycleT = fullCycle * 100;
+            int dutyT = duty * 100;
+            usleep(dutyT);
+            gpiod_line_set_value(lineLED, 0);
+            usleep(fullCycleT - duty);
             iteration++;
             continue;
         }

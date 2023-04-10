@@ -25,10 +25,10 @@ int main(int argc, char **argv)
         for(int i = 0; i < rotRead.size(); i++){
             char dir = rotRead[i];
             if(dir == 'r'){
-                lr += 1000;
+                lr += 10;
             }
             else{
-                lr += -1000;
+                lr += -10;
             }
         }
         if(lr > 0){
