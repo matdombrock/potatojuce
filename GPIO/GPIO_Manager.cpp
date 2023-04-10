@@ -114,12 +114,12 @@ private:
                     continue;
                 }
             }
-            // PWM
-            set(0, (iteration & 1) != 0);
-            usleep(1000);
-
-            iteration++;
         }
+        // Done with input
+        // PWM
+        set(0, (iteration & 1) != 0);
+        usleep(1000);
+        iteration++;
     } 
 
     // Handles FIFO output
