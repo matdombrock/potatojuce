@@ -24,6 +24,11 @@ public:
         gpioDT.release();
         gpioCLK.release();
     }
+    std::string read(){
+        std::string out = outQueue;
+        outQueue = "";
+        return out;
+    }
 private:
     void readLoop(){
         bool wasHit = false;
@@ -33,61 +38,47 @@ private:
             // Read CLK & DT
             bool clk = gpioCLK.get();
             bool dt = gpioDT.get();
+            //std::cout << clk << dt << std::endl;
             if(clk && dt){
                 //std::cout << "HIT" << std::endl;
                 wasHit = true;
                 continue;
             }
             if(wasHit && dt){
-                // if(isBounce(ts)){
-                //     // Debounce
-                //     continue;
-                // }
                 int64_t speed = checkSpeed(ts);
-                if(speed > 5 && (lastDir != 'l' && lastDir != 'u')){
+                if(speed > 5 && lastDir == 'r'){
                     std::cout << "Debounce Left: " << speed << std::endl;
                 }
                 else{
-                    std::cout << "Left: " << speed << std::endl;
-                    ts = timestamp();
-                    lastDir = 'r';
+                    std::cout << "Left: " << speed << std::endl; 
+                    outQueue += "l";
                 }
+                ts = timestamp();
+                lastDir = 'l';
                 wasHit = false;
                 continue;
             }
             if(wasHit && clk){
-                // if(isBounce(ts)){
-                //     // Debounce
-                //     continue;
-                // }
                 int64_t speed = checkSpeed(ts);
-                if(speed > 5 && (lastDir != 'r' && lastDir != 'u')){
+                if(speed > 5 && lastDir == 'l'){
                     std::cout << "Debounce Right: " << speed << std::endl;
                 }
                 else{
                     std::cout << "Right: " << speed << std::endl;
-                    ts = timestamp();
-                    lastDir = 'r';
+                    outQueue += "r";
                 }
+                ts = timestamp();
+                lastDir = 'r';
                 wasHit = false;
                 continue;
             }
-            //std::cout << clk << dt << std::endl;
+            std::cout << outQueue << std::endl;
         }
     }
-    // bool isBounce(int64_t ts){
-    //     if(checkSpeed(ts) < 10){
-    //         // Bounced
-    //         std::cout << "Debounced!" << std::endl;
-    //         return true;
-    //     }
-    //     return false;
-    // }
-    
+
     // Returns a speed val 0->10
     int64_t checkSpeed(int64_t ts){
         auto delta = timestamp() - ts;
-        //std::cout << ts << " " << timestamp() << " " << speed << std::endl;
         delta = delta > 500 ? 500 : delta;
         // get a speed val 0->10
         auto speed = (500 - delta)/50;
@@ -100,6 +91,7 @@ private:
         //std::cout << ts << std::endl;
         return ts;
     }
+    std::string outQueue = "";
     int dir = 0;
     GPIO gpioSW;
     GPIO gpioDT;
