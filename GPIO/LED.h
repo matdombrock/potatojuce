@@ -11,6 +11,9 @@ public:
     void off(){
         gpio.set(0);
     }
+    void set(bool val){
+        gpio.set(val);
+    }
     void toggle(){
         bool cur = gpio.getState();
         gpio.set(!cur);
