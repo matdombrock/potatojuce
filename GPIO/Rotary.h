@@ -62,7 +62,7 @@ private:
         char lastDir = 'n';
         std::cout << "Enter Read Thread Loop" << std::endl;
         while(m_readThreadRunning){
-            usleep(1000);// Optimization
+            usleep(1000);// CPU Optimization
             std::unique_lock<std::mutex> lock(m_messageQueueMutex);
             if (!m_messageQueue.empty()) {
                 m_messageQueueCV.wait(lock, [this] { return !m_messageQueue.empty(); });
