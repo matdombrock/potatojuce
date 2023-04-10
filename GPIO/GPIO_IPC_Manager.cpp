@@ -252,7 +252,6 @@ private:
         return tokens;
     }
     std::string fifoPath;
-    //int iteration = 0;
     std::ifstream fifoIn;
     std::ofstream fifoOut;
     std::vector<GPIO*> pinsR = {};
