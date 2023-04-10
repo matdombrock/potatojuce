@@ -89,6 +89,7 @@ public:
 private:
     void pwmThreadFunc(){
         int pwmUSecs = 0;
+        int iteration = 0;
         while(m_pwmThreadRunning){
             std::unique_lock<std::mutex> lock(m_messageQueueMutex);
             if (!m_messageQueue.empty()) {
@@ -108,7 +109,9 @@ private:
             std::cout << "LOOP" << std::endl;
             lock.unlock();
             //std::this_thread::yield();
+            set((iteration & 1) != 0);
             usleep(pwmUSecs);
+            iteration++;
             continue;
         }
     }
