@@ -19,6 +19,7 @@ int main(int argc, char **argv)
         std::cout << i << std::endl;
         sleep(1);
     }
+    led.off();
     for(int i = 1; i < 8; i++){
         led2.pwm(i * 10000);
         std::cout << i << std::endl;
