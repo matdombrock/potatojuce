@@ -196,6 +196,17 @@ private:
         }
     }
 
+    //
+    // Helper methods
+    //
+
+    // Wraps GPIO Set
+    void set(int pinIndex, bool val){
+        if(validIndex(pinIndex)){
+            pinsW[pinIndex]->set(val);
+        }
+    }
+
     bool validIndex(int pinIndex){
         if(pinsW.size() >= pinIndex){
             return true;
@@ -204,13 +215,6 @@ private:
         return false;
     }
 
-    // Wraps GPIO Set
-    void set(int pinIndex, bool val){
-        if(validIndex(pinIndex)){
-            pinsW[pinIndex]->set(val);
-        }
-    }
-    
     // Reads line if available or continues instantly if not
     // Source: https://stackoverflow.com/a/57809972
     static bool getline_async(std::istream& is, std::string& str, char delim = '\n') {    
@@ -258,6 +262,7 @@ private:
     std::vector<GPIO*> pinsW = {};
 };
 
+
 int main(int argc, char **argv)
 {
   std::cout << "Starting LED Driver Manager" << std::endl;
@@ -279,26 +284,3 @@ int main(int argc, char **argv)
   return 0;
 }
 
-
-// Deprecated
-// bool deviceExists(std::string pinName){
-//     if(pinsR.count(pinName)){
-//         return true;
-//     }
-//     if(pinsW.count(pinName)){
-//         return true;
-//     }
-//     return false;
-// }
-// Deprecated
-// bool isWriteMode(std::string pinName){
-//     if(pinsR.count(pinName)){
-//         return false;
-//     }
-//     if(pinsW.count(pinName)){
-//         return true;
-//     }
-//     std::cout << "Error: Pin not open";
-//     // Default to read
-//     return false;
-// }
