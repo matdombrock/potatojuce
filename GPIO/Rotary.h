@@ -1,4 +1,11 @@
 #include <chrono>
+#include <stdio.h>
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <queue>
+#include <unistd.h>
 #include "GPIO.h"
 
 class Rotary{
@@ -17,28 +24,63 @@ public:
         gpioDT.open();
         gpioCLK.open();
         // Start loop
-        readLoop();
+        std::cout << "Starting Thread" << std::endl;
+        m_readThread = std::thread(&Rotary::readThreadFunc, this);
+        // Join the threads so main doesnt die
+        //m_readThread.join();
     }
     ~Rotary(){
         gpioSW.release();
         gpioDT.release();
         gpioCLK.release();
+        m_readThread.join();
     }
     std::string read(){
         std::string out = outQueue;
-        outQueue = "";
+        // Check if we actually have a queue
+        // and should clear
+        if(out.size() > 0){
+            // Lock the mutex before accessing the message queue
+            std::unique_lock<std::mutex> lock(m_messageQueueMutex);
+            // Add the message to the queue
+            std::string message = "clear";
+            m_messageQueue.push(message);
+            // Notify the PWM thread that there's a new message
+            m_messageQueueCV.notify_one();
+        }
         return out;
     }
+    bool m_readThreadRunning = true;
+    std::thread m_readThread;
+    std::queue<std::string> m_messageQueue;
+    std::mutex m_messageQueueMutex;
+    std::condition_variable m_messageQueueCV;
 private:
-    void readLoop(){
+    void readThreadFunc(){
         bool wasHit = false;
         int64_t ts;
         char lastDir = 'n';
-        while(true){
+        std::cout << "Enter Thread Loop" << std::endl;
+        while(m_readThreadRunning){
+            std::unique_lock<std::mutex> lock(m_messageQueueMutex);
+            if (!m_messageQueue.empty()) {
+                m_messageQueueCV.wait(lock, [this] { return !m_messageQueue.empty(); });
+                // Get the next message from the queue
+                std::string message = m_messageQueue.front();
+                m_messageQueue.pop();
+                // Process the message
+                //std::cout << "Received Rotary message: " << message << std::endl;
+                if(message == "clear"){
+                    // Clear out queue
+                    outQueue = "";
+                }
+            }
+            // Release the lock and continue the loop
+            lock.unlock();
             // Read CLK & DT
             bool clk = gpioCLK.get();
             bool dt = gpioDT.get();
-            //std::cout << clk << dt << std::endl;
+            //std::cout << "READ: " << clk << dt << std::endl;
             if(clk && dt){
                 //std::cout << "HIT" << std::endl;
                 wasHit = true;
@@ -50,8 +92,11 @@ private:
                     std::cout << "Debounce Left: " << speed << std::endl;
                 }
                 else{
-                    std::cout << "Left: " << speed << std::endl; 
-                    outQueue += "l";
+                    std::cout << "Left: " << speed << std::endl;
+                    // One char for each speed lvl
+                    //for(int s; s < speed; s++){
+                        outQueue += "l";
+                    //}
                 }
                 ts = timestamp();
                 lastDir = 'l';
@@ -65,14 +110,18 @@ private:
                 }
                 else{
                     std::cout << "Right: " << speed << std::endl;
-                    outQueue += "r";
+                    // One char for each speed lvl
+                    //for(int s; s < speed; s++){
+                        outQueue += "r";
+                    //}
                 }
                 ts = timestamp();
                 lastDir = 'r';
                 wasHit = false;
                 continue;
             }
-            std::cout << outQueue << std::endl;
+            //usleep(1000);
+            //std::cout << outQueue << std::endl;
         }
     }
 

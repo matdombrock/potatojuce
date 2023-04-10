@@ -14,6 +14,33 @@ int main(int argc, char **argv)
         "gpiochip1", 93,
         "gpiochip1", 94
     );
+    //std::this_thread::sleep_for(std::chrono::seconds(15));
+
+    int lr = 0;
+    while(true){
+        std::string rotRead = rot.read();
+        if(rotRead.size() == 0){
+            continue;
+        }
+        for(int i = 0; i < rotRead.size(); i++){
+            char dir = rotRead[i];
+            if(dir == 'r'){
+                lr += 1000;
+            }
+            else{
+                lr += -1000;
+            }
+        }
+        if(lr > 0){
+            led.pwm(lr);
+            led2.off();
+        }
+        else{
+            led2.pwm(-lr);
+            led.off();
+        }
+        usleep(10000);
+    }
 
     // for(int i = 0; i < 4; i++){
     //     bool state = i % 2;

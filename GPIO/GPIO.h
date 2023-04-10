@@ -17,6 +17,9 @@ public:
         chipName = newChipName;
         lineNum = newLineNum;
     }
+    ~GPIO(){
+        m_pwmThread.join();
+    }
     void open(){
         log("Opening GPIO");
         // Open GPIO chip
@@ -50,15 +53,15 @@ public:
     }
     void pwm(int usecs){
         if(usecs == 0){
-            log("Stopping PWM Thread");
             pwmEnabled = false;
-            m_pwmThreadRunning = false;
         }
         else if(pwmEnabled == false){
             log("Starting PWM Thread");
             pwmEnabled = true;
-            m_pwmThreadRunning = true;
-            m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
+            if(m_pwmThreadRunning == false){
+                m_pwmThreadRunning = true;
+                m_pwmThread = std::thread(&GPIO::pwmThreadFunc, this);
+            }
         }
         // Lock the mutex before accessing the message queue
         std::unique_lock<std::mutex> lock(m_messageQueueMutex);
@@ -97,6 +100,9 @@ private:
         int pwmUSecs = 0;
         int iteration = 0;
         while(m_pwmThreadRunning){
+            if(pwmEnabled == false){
+                continue;
+            }
             std::unique_lock<std::mutex> lock(m_messageQueueMutex);
             if (!m_messageQueue.empty()) {
                 m_messageQueueCV.wait(lock, [this] { return !m_messageQueue.empty(); });
@@ -106,8 +112,10 @@ private:
                 // Process the message
                 std::cout << "Received PWM message: " << message << std::endl;
                 if(message == "0"){
-                    // Sending 0 will stop the PWM
-                    return;
+                    // Double check that we stopped
+                    // doing PWM stuff
+                    pwmEnabled = false;
+                    continue;
                 }
                 pwmUSecs = std::stoi(message);
             }
