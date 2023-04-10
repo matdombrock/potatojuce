@@ -75,12 +75,9 @@ private:
                     continue;
                 }
                 if(cmd == "pwm"){
-                    // Not implemented
-                    // If PWM is slower than 100ms
-                    // we should treat it as a blink
-                    // which is based on time stamps
-                    // and not on sleeps
-                    pinsW[pinIndex]->pwm(pinVal);
+                    if(validIndex(pinIndex)){
+                        pinsW[pinIndex]->pwm(pinVal);
+                    }
                     continue;
                 }
                 else{
@@ -116,11 +113,6 @@ private:
                 }
             }
         }
-        // Done with input
-        // PWM
-        //set(0, (iteration & 1) != 0);
-        //usleep(1000);
-        //iteration++;
     } 
 
     // Handles FIFO output
@@ -204,13 +196,18 @@ private:
         }
     }
 
+    bool validIndex(int pinIndex){
+        if(pinsW.size() >= pinIndex){
+            return true;
+        }
+        std::cout << "Error: unknown write pin: " << pinIndex << std::endl;
+        return false;
+    }
+
     // Wraps GPIO Set
     void set(int pinIndex, bool val){
-        if(pinsW.size() >= pinIndex){
+        if(validIndex(pinIndex)){
             pinsW[pinIndex]->set(val);
-        }
-        else{
-            std::cout << "Error: unknown write pin: " << pinIndex << std::endl;
         }
     }
     
