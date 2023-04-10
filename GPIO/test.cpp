@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
     int lr = 0;
     while(true){
-        usleep(1000);// Optimization
+        usleep(1000);// CPU Optimization
         std::string rotRead = rot.read();
         if(rotRead.size() == 0){
             continue;
