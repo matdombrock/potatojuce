@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     for(int i = 0; i < 99; i++){
         bool state = i % 2;
         led.set(state);
-        led.set(!state);
+        led2.set(!state);
         std::cout << state << std::endl;
         sleep(1);
     }
