@@ -16,7 +16,11 @@ int main(int argc, char **argv)
     }
     for(int i = 1; i < 8; i++){
         led.pwm(i * 10000);
-        led2.set(i * 10000);
+        std::cout << i << std::endl;
+        sleep(1);
+    }
+    for(int i = 1; i < 8; i++){
+        led2.pwm(i * 10000);
         std::cout << i << std::endl;
         sleep(1);
     }
