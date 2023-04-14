@@ -1,5 +1,11 @@
 /*
-    This is basically just a wrapper for gpiod
+    The base class for all GPIO devices
+    Handles:
+    - Open
+    - Read
+    - Write
+    - PWM
+    - Release
 */
 #pragma once
 #include <gpiod.h>
@@ -75,6 +81,12 @@ public:
     int getLineNum(){
         return lineNum;
     }
+    // Sets the cycle time in useconds
+    // Default is 10000
+    void setCycleTime(int useconds=10000){
+        cycleTime = useconds;
+    }
+    // Log a message containing all of the GPIO info
     void log(std::string msg){
         std::cout << "---------------------------" << std::endl;
         std::cout << msg << std::endl;
@@ -87,6 +99,7 @@ public:
     int state = 0;// Cache the pin state
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
+    int cycleTime = 100 * 100;
     bool pwmEnabled = false;
     bool m_pwmThreadRunning = false;
     std::thread m_pwmThread;
@@ -96,7 +109,6 @@ public:
 private:
     void pwmThreadFunc(){
         int duty = 0;
-        int iteration = 0;
         while(m_pwmThreadRunning){
             if(pwmEnabled == false){
                 continue;
@@ -109,27 +121,37 @@ private:
                 m_messageQueue.pop();
                 // Process the message
                 std::cout << "Received PWM message: " << message << std::endl;
+                // Set the duty cycle accoring to the message
                 duty = std::stoi(message);
-                duty = duty <= 100 ? duty : 100;
+                // Ensure 0->100
+                duty = duty > 100 ? 100 : duty;
+                duty = duty < 0 ? 0 : duty;
             }
             // Release the lock and continue the loop
             lock.unlock();
-            //bool val = (iteration & 1) != 0;
+            
+            // Scale to cycleTime
+            int onTime = duty * (cycleTime / 100);
+            // Ensure onTime doesnt exceed
+            // cycleTime
+            if(onTime > cycleTime){
+                onTime = cycleTime;
+            }
+
+            int offTime = cycleTime - onTime;
+            if(offTime < 0){
+                offTime = 0;
+            }
+            
             gpiod_line_set_value(lineLED, 1);
-            int fullCycle = 100;
-            
-            // Temp values with scaling
-            int fullCycleT = fullCycle * 100;
-            int dutyT = duty * 100;
-            
+
             // Sleep for duty time
-            usleep(dutyT);
+            usleep(onTime);
 
             gpiod_line_set_value(lineLED, 0);
             
             // Sleep for rest time
-            usleep(fullCycleT - duty);
-            iteration++;// Not used?
+            usleep(offTime);
             continue;
         }
     }

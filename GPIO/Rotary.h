@@ -94,6 +94,7 @@ private:
         }
     }
 
+    // Process an incoming read message
     void processChange(char thisDir){
         int speed = checkSpeed(ts);
         if(checkDebounce(speed, thisDir) == false){

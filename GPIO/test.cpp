@@ -14,16 +14,32 @@ int main(int argc, char **argv)
         "gpiochip1", 93,
         "gpiochip1", 94
     );
-    //std::this_thread::sleep_for(std::chrono::seconds(15));
 
     int lr = 0;
+    int it = 0;
     while(true){
         usleep(1000);// CPU Optimization
         std::string rotRead = rot.read();
+
+
+        // Handle blink
+        if(std::abs(lr) == 100){
+            bool odd = it > 100;
+            it = it <= 200 ? it+1 : 0;
+            if(lr >= 100){
+                led2.set(odd);
+            }
+            else if(lr <= -100){
+                led.set(odd);
+            }
+        }
+
+        // Dont continue from here if the message is empty
         if(rotRead.size() == 0){
             continue;
         }
         std::cout << rotRead << std::endl;
+        // Set the `lr` value.
         for(int i = 0; i < rotRead.size(); i++){
             char dir = rotRead[i];
             if(dir == 'r'){
@@ -33,33 +49,19 @@ int main(int argc, char **argv)
                 lr += -1;
             }
         }
+        // Dont allow lr to exceed abs(100)
+        lr = lr > 100 ? 100 : lr;
+        lr = lr < -100 ? -100 : lr;
+
+        // Set pins according to `lr`
         if(lr > 0){
-            led.pwm(lr);
-            led2.off();
-        }
-        else{
-            led2.pwm(-lr);
+            led2.pwm(lr);
             led.off();
         }
+        else{
+            led.pwm(std::abs(lr));// This is safer than `-lr`
+            led2.off();
+        }
     }
-
-    // for(int i = 0; i < 4; i++){
-    //     bool state = i % 2;
-    //     led.set(state);
-    //     led2.set(!state);
-    //     std::cout << state << std::endl;
-    //     sleep(1);
-    // }
-    // for(int i = 1; i < 8; i++){
-    //     led.pwm(i * 10000);
-    //     std::cout << i << std::endl;
-    //     sleep(1);
-    // }
-    // led.off();
-    // for(int i = 1; i < 8; i++){
-    //     led2.pwm(i * 10000);
-    //     std::cout << i << std::endl;
-    //     sleep(1);
-    // }
     return 0;
 }

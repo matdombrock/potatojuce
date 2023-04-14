@@ -24,10 +24,6 @@ public:
         bool cur = gpio.getState();
         gpio.set(!cur);
     }
-    // void blink(int seconds){
-    //     // Multiply by 100 to get uSeconds. 
-    //     gpio.pwm(seconds * 100);
-    // }
     void pwm(int duty){
         gpio.pwm(duty);
     }
