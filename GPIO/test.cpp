@@ -23,13 +23,14 @@ int main(int argc, char **argv)
         if(rotRead.size() == 0){
             continue;
         }
+        std::cout << rotRead << std::endl;
         for(int i = 0; i < rotRead.size(); i++){
             char dir = rotRead[i];
             if(dir == 'r'){
-                lr += 10;
+                lr += 1;
             }
             else{
-                lr += -10;
+                lr += -1;
             }
         }
         if(lr > 0){

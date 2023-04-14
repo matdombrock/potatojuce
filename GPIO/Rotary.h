@@ -26,8 +26,6 @@ public:
         // Start loop
         std::cout << "Starting Read Thread" << std::endl;
         m_readThread = std::thread(&Rotary::readThreadFunc, this);
-        // Join the threads so main doesnt die
-        //m_readThread.join();
     }
     ~Rotary(){
         gpioSW.release();
@@ -43,9 +41,10 @@ public:
             // Lock the mutex before accessing the message queue
             std::unique_lock<std::mutex> lock(m_messageQueueMutex);
             // Add the message to the queue
+            // saying we want to clear it
             std::string message = "clear";
             m_messageQueue.push(message);
-            // Notify the PWM thread that there's a new message
+            // Notify the thread that there's a new message
             m_messageQueueCV.notify_one();
         }
         return out;
@@ -57,9 +56,8 @@ public:
     std::condition_variable m_messageQueueCV;
 private:
     void readThreadFunc(){
-        bool wasHit = false;
-        int64_t ts;
-        char lastDir = 'n';
+        wasHit = false;
+        lastDir = 'n';
         std::cout << "Enter Read Thread Loop" << std::endl;
         while(m_readThreadRunning){
             usleep(1000);// CPU Optimization
@@ -70,7 +68,6 @@ private:
                 std::string message = m_messageQueue.front();
                 m_messageQueue.pop();
                 // Process the message
-                //std::cout << "Received Rotary message: " << message << std::endl;
                 if(message == "clear"){
                     // Clear out queue
                     outQueue = "";
@@ -81,59 +78,65 @@ private:
             // Read CLK & DT
             bool clk = gpioCLK.get();
             bool dt = gpioDT.get();
-            //std::cout << "READ: " << clk << dt << std::endl;
+            bool sw = gpioSW.get();
             if(clk && dt){
-                //std::cout << "HIT" << std::endl;
                 wasHit = true;
                 continue;
             }
             if(wasHit && dt){
-                int64_t speed = checkSpeed(ts);
-                if(speed > 5 && lastDir == 'r'){
-                    std::cout << "Debounce Left: " << speed << std::endl;
-                }
-                else{
-                    std::cout << "Left: " << speed << std::endl;
-                    // One char for each speed lvl
-                    //for(int s; s < speed; s++){
-                        outQueue += "l";
-                    //}
-                }
-                ts = timestamp();
-                lastDir = 'l';
-                wasHit = false;
+                processChange('l');
                 continue;
             }
             if(wasHit && clk){
-                int64_t speed = checkSpeed(ts);
-                if(speed > 5 && lastDir == 'l'){
-                    std::cout << "Debounce Right: " << speed << std::endl;
-                }
-                else{
-                    std::cout << "Right: " << speed << std::endl;
-                    // One char for each speed lvl
-                    //for(int s; s < speed; s++){
-                        outQueue += "r";
-                    //}
-                }
-                ts = timestamp();
-                lastDir = 'r';
-                wasHit = false;
+                processChange('r');
                 continue;
             }
-            
-            //std::cout << outQueue << std::endl;
         }
     }
 
+    void processChange(char thisDir){
+        int speed = checkSpeed(ts);
+        if(checkDebounce(speed, thisDir) == false){
+            std::string dirString = thisDir == 'r' ? "Right" : "Left";
+            std::cout << dirString << ": " << speed << std::endl;
+            sendOut(speed, thisDir);
+        }
+        ts = timestamp();
+        lastDir = thisDir;
+        wasHit = false;
+    }
+
+    // Send out one char for each speed lvl
+    void sendOut(int speed, char thisDir){
+        for(int s = 0; s < speed + 1; s++){
+            std::string dirString(1, thisDir);
+            outQueue += dirString;
+        }
+    }
+
+    // Returns true if this movement was a bounce
+    // If the direction has changed and the
+    // speed was over `debounceThreshold` this was
+    // likely a bounce
+    bool checkDebounce(int speed, const char thisDir){
+        if(speed > debounceThreshold && lastDir != thisDir){
+            std::string dirString = thisDir == 'r' ? "Right" : "Left";
+            std::cout << "Debounce "<< dirString << ": " << speed << std::endl;
+
+            return true;
+        }
+        return false;
+    }
     // Returns a speed val 0->10
-    int64_t checkSpeed(int64_t ts){
+    int checkSpeed(int64_t ts){
         auto delta = timestamp() - ts;
         delta = delta > 500 ? 500 : delta;
+        delta = delta < 0 ? 0 : delta;
         // get a speed val 0->10
         auto speed = (500 - delta)/50;
         return speed;
     }
+    // Returns the timestamp in ms
     int64_t timestamp(){
         auto now = std::chrono::system_clock::now();
         auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -141,8 +144,12 @@ private:
         //std::cout << ts << std::endl;
         return ts;
     }
+    int debounceThreshold = 5;// ms
+    //
     std::string outQueue = "";
-    int dir = 0;
+    char lastDir = 'n'; 
+    bool wasHit = false;
+    int64_t ts;
     GPIO gpioSW;
     GPIO gpioDT;
     GPIO gpioCLK;
