@@ -4,6 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="ATolQS" name="PotatoJuce">
     <GROUP id="{1466B4DB-B2AA-E6DD-2AB2-DBE6F4CFEB94}" name="Source">
+      <FILE id="P0mRlq" name="PCLI.h" compile="0" resource="0" file="Source/PCLI.h"/>
       <FILE id="jBQTS5" name="PWave_Demo.h" compile="0" resource="0" file="Source/PWave_Demo.h"/>
       <FILE id="rgijnW" name="PWaveManager.h" compile="0" resource="0" file="Source/PWaveManager.h"/>
       <FILE id="E7CWBC" name="PWave_Sine2.h" compile="0" resource="0" file="Source/PWave_Sine2.h"/>
