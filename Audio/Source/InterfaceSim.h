@@ -1,5 +1,5 @@
 #pragma once
-class PInterfaceSim{
+class InterfaceSim{
 public:
   void readInput(){
     

@@ -6,11 +6,11 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "PSynth.h"
+#include "Synth.h"
 
-class PCLI{
+class CLI{
 public:
-  PCLI(PSynth * pSynth){
+  CLI(Synth * pSynth){
     synth = pSynth;
   }
   void cliLoop(){
@@ -73,7 +73,7 @@ public:
     }
   }
 private:
-  PSynth * synth;
+  Synth * synth;
   float frequency = 440.0f;
   float pVals[4];
 };

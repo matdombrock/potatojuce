@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-class PParams{
+class Params{
 public:
   void setParam(int index, float value){
 		// Sanitize

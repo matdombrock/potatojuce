@@ -1,8 +1,8 @@
 #pragma once
-#include "PParams.h"
-class PWaveEngine{
+#include "Params.h"
+class WaveEngine{
 public:
-  PWaveEngine(PParams * pparams){
+  WaveEngine(Params * pparams){
     params = pparams;
   }
   virtual float getNextSample(){
@@ -24,7 +24,7 @@ public:
     calcDelta();
     DBG("Set Frequency: "+juce::String(frequency));
   }
-  PParams *params;
+  Params *params;
   float frequency = 440.0f;
   double currentAngle = 0.0;
   double angleDelta = 0.0;

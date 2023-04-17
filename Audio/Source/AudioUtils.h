@@ -13,7 +13,7 @@
 /*
 	Utility Functions
 */
-class PAudioUtils{
+class AudioUtils{
 public:
   // Generate a white noise sample
   static float whiteNoise(){

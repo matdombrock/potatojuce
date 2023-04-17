@@ -1,14 +1,14 @@
 #pragma once
 #include <JuceHeader.h>
-#include "PParams.h"
-#include "PWaveEngine.h"
-#include "PWave_WhiteNoise.h"
-#include "PWave_Sine.h"
-#include "PWave_Sine2.h"
-#include "PWave_Demo.h"
-class PWaveManager {
+#include "Params.h"
+#include "WaveEngine.h"
+#include "Wave_WhiteNoise.h"
+#include "Wave_Sine.h"
+#include "Wave_Sine2.h"
+#include "Wave_Demo.h"
+class WaveManager {
 public:
-  PWaveManager(PParams * params) : 
+  WaveManager(Params * params) : 
     wave_whiteNoise(params), 
     wave_sine(params),
     wave_sine2(params),
@@ -16,7 +16,7 @@ public:
   {
 
   }
-  PWaveEngine * getEngine(juce::String waveEngineName){
+  WaveEngine * getEngine(juce::String waveEngineName){
     return waveEngines[waveEngineName];
   }
   bool hasEngine(juce::String waveEngineName){
@@ -26,11 +26,11 @@ public:
     return false;
   }
 private:
-  PWave_WhiteNoise wave_whiteNoise;
-  PWave_Sine wave_sine;
-  PWave_Sine2 wave_sine2;
-  PWave_Demo wave_demo;
-  std::map<juce::String, PWaveEngine*> waveEngines = {
+  Wave_WhiteNoise wave_whiteNoise;
+  Wave_Sine wave_sine;
+  Wave_Sine2 wave_sine2;
+  Wave_Demo wave_demo;
+  std::map<juce::String, WaveEngine*> waveEngines = {
 		{"default", &wave_whiteNoise},
 		{"noise", &wave_whiteNoise},
 		{"sine", &wave_sine},

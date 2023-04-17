@@ -1,10 +1,10 @@
 #pragma once
-#include "PWaveEngine.h"
+#include "WaveEngine.h"
 
 
-class PWave_Sine : public PWaveEngine{
+class Wave_Sine : public WaveEngine{
 public:
-  PWave_Sine(PParams * params) : PWaveEngine(params){
+  Wave_Sine(Params * params) : WaveEngine(params){
 
   }
   float getNextSample() override{

@@ -10,12 +10,12 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "PSynth.h"
-#include "PCLI.h"
+#include "Synth.h"
+#include "CLI.h"
 
-class PAudioProcessor{
+class AudioProcessor{
 public:
-  PAudioProcessor(){
+  AudioProcessor(){
     DBG("AudioProcessor Init");
   }
 
@@ -39,7 +39,7 @@ public:
     float frequency = 440.0f;
     synth.setFrequency(frequency);
     // Runs with CLI input
-    PCLI cli(&synth);
+    CLI cli(&synth);
     cli.cliLoop();
     std::cout << "Closing device...\n";
   }
@@ -48,5 +48,5 @@ private:
   juce::ScopedJuceInitialiser_GUI gui_init;// This does not actually init GUI
   juce::AudioDeviceManager adm;
   juce::AudioSourcePlayer asp;
-  PSynth synth;
+  Synth synth;
 };

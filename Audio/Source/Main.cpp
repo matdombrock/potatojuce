@@ -1,5 +1,5 @@
 #include <JuceHeader.h>
-#include "PAudioProcessor.h"
+#include "AudioProcessor.h"
 
 /////
 using namespace juce;
@@ -9,7 +9,7 @@ using namespace juce;
 */
 int main(int argc, char* argv[])
 {
-	PAudioProcessor pap;
+	AudioProcessor pap;
 	pap.mainLoop();
 	return 0;
 }

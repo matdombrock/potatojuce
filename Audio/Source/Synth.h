@@ -11,16 +11,16 @@
 #pragma once
 #include <JuceHeader.h>
 #include <map>
-#include "PAudioUtils.h"
-#include "PParams.h"
-#include "PWaveEngine.h"
-#include "PWaveManager.h"
+#include "AudioUtils.h"
+#include "Params.h"
+#include "WaveEngine.h"
+#include "WaveManager.h"
 /*
 	The base synth class which other synths will inherit
 */
-class PSynth : public juce::AudioSource{
+class Synth : public juce::AudioSource{
 public:
-	PSynth() : waveManager(&params){
+	Synth() : waveManager(&params){
 		waveEngine = waveManager.getEngine("default");
 	}
 	/*  
@@ -75,8 +75,8 @@ public:
 private:
 	double sampleRateCache = 0;
 	float amplitude = 0.5;
-	PParams params;
+	Params params;
 	juce::String waveEngineName = "default";
-	PWaveEngine * waveEngine;
-	PWaveManager waveManager;
+	WaveEngine * waveEngine;
+	WaveManager waveManager;
 };

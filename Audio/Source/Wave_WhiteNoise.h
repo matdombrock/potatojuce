@@ -1,18 +1,18 @@
 #pragma once
-#include "PWaveEngine.h"
-#include "PAudioUtils.h"
+#include "WaveEngine.h"
+#include "AudioUtils.h"
 #include "RALowpass1.h"
 
 
-class PWave_WhiteNoise : public PWaveEngine{
+class Wave_WhiteNoise : public WaveEngine{
 public:
-  PWave_WhiteNoise(PParams * params) : PWaveEngine(params){
+  Wave_WhiteNoise(Params * params) : WaveEngine(params){
 
   }
   float getNextSample() override{
     float pVal = params->getParam(0);
     //DBG(amp);
-    float sample = PAudioUtils::whiteNoise();
+    float sample = AudioUtils::whiteNoise();
     sample = lowpass.process(sample, pVal*12*1000);
     return sample;
   }

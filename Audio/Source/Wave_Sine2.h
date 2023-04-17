@@ -1,12 +1,12 @@
 #pragma once
-#include "PWaveEngine.h"
-#include "PAudioUtils.h"
+#include "WaveEngine.h"
+#include "AudioUtils.h"
 #include "RALowpass1.h"
 
 
-class PWave_Sine2 : public PWaveEngine{
+class Wave_Sine2 : public WaveEngine{
 public:
-  PWave_Sine2(PParams * params) : PWaveEngine(params){
+  Wave_Sine2(Params * params) : WaveEngine(params){
     params->setParam(2, 1.0f);
   }
   float getNextSample() override{
@@ -16,7 +16,7 @@ public:
     
     float noiseLvl = params->getParam(1);
     noiseLvl /= 32;// Only a small amount
-    float noiseSignal = PAudioUtils::whiteNoise();
+    float noiseSignal = AudioUtils::whiteNoise();
     noiseSignal *= noiseLvl;
 
     // Apply noise to waveform
