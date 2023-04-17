@@ -1,11 +1,7 @@
 /*
-  ==============================================================================
-
-    PCLI.h
-    Created: 13 Apr 2023 11:20:28pm
-    Author:  mathieu
-
-  ==============================================================================
+  Handles the command line interface
+  which doubles as an IPC layer to interpret 
+  signals from the harware interface
 */
 
 #pragma once
