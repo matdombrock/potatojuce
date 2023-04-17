@@ -19,6 +19,7 @@ public:
   WaveEngine * getEngine(juce::String waveEngineName){
     return waveEngines[waveEngineName];
   }
+  // Returns true if `waveEngineName` is a valid name
   bool hasEngine(juce::String waveEngineName){
     if(waveEngines.find(waveEngineName) != waveEngines.end()){
       return true;
