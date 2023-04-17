@@ -1,7 +1,7 @@
 #pragma once
-#include "WaveEngine.h"
-#include "AudioUtils.h"
-#include "RALowpass1.h"
+#include "../WaveEngine.h"
+#include "../AudioUtils.h"
+#include "../ra/RALowpass1.h"
 
 
 class Wave_WhiteNoise : public WaveEngine{

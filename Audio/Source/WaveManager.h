@@ -1,11 +1,11 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Params.h"
-#include "WaveEngine.h"
-#include "Wave_WhiteNoise.h"
-#include "Wave_Sine.h"
-#include "Wave_Sine2.h"
-#include "Wave_Demo.h"
+#include "./WaveEngine.h"
+#include "./waves/Wave_WhiteNoise.h"
+#include "./waves/Wave_Sine.h"
+#include "./waves/Wave_Sine2.h"
+#include "./waves/Wave_Demo.h"
 class WaveManager {
 public:
   WaveManager(Params * params) : 

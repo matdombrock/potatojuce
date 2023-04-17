@@ -1,5 +1,5 @@
 #pragma once
-#include "WaveEngine.h"
+#include "../WaveEngine.h"
 
 
 class Wave_Sine : public WaveEngine{

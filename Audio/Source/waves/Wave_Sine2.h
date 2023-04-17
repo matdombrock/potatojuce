@@ -1,13 +1,13 @@
 #pragma once
-#include "WaveEngine.h"
-#include "AudioUtils.h"
-#include "RALowpass1.h"
+#include "../WaveEngine.h"
+#include "../AudioUtils.h"
+#include "../ra/RALowpass1.h"
 
 
-class Wave_Demo : public WaveEngine{
+class Wave_Sine2 : public WaveEngine{
 public:
-  Wave_Demo(Params * params) : WaveEngine(params){
-    
+  Wave_Sine2(Params * params) : WaveEngine(params){
+    params->setParam(2, 1.0f);
   }
   float getNextSample() override{
     float detune = params->getParam(0);
@@ -25,7 +25,7 @@ public:
     float lowpassLvl = params->getParam(2);
     lowpassLvl *= 20000;
 
-    float sig1 = sin(currentAngle) > 0 ? 1 : 0;// Fast square
+    float sig1 = sin(currentAngle);// Fast square
     float sig2 = sin(currentAngle * detune);// Not real detune
     float sample = (sig1 + sig2) / 2;
 
@@ -35,14 +35,6 @@ public:
     return sample;
   }
   void prepareToPlayWave(double sampleRate) override{
-    // We can override params here
-    // if we want to
-    params->setParam(0, 0);
-    params->setParam(1, 0);
-    params->setParam(2, 1);
-    params->setParam(0, 0);
-    DBG("Prepared Demo Synth");
-    DBG("detune noise lowpass null");
     lowpass.prepareToPlay(sampleRate);
   }
 private:
