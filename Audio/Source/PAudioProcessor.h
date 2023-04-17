@@ -11,7 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PSynth.h"
-#include "PWave_WhiteNoise.h"
+#include "PCLI.h"
 
 class PAudioProcessor{
 public:
@@ -35,23 +35,12 @@ public:
   void mainLoop(){
     prepareToPlay();
     // Setup the synth
-    synth.setWaveEngine("demo");
-    float pVals[4];
-    float frequency = 440.0;
+    synth.setWaveEngine("sine2");
+    float frequency = 440.0f;
     synth.setFrequency(frequency);
     // Runs with CLI input
-    while (true)
-    {
-      // freq p0 p1 p2 p3
-      DBG("Usage: freq p0 p1 p2 p3");
-      std::cin >> frequency;// Get input from CLI
-      synth.setFrequency(frequency);
-      for(int i = 0; i < 4; i++){
-        std::cin >> pVals[i];// Get input from CLI
-        juce::jmin(pVals[i], 1.0f);
-        synth.setParam(i,pVals[i]);
-      }
-    }
+    PCLI cli(&synth);
+    cli.cliLoop();
     std::cout << "Closing device...\n";
   }
 

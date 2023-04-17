@@ -17,24 +17,26 @@ public:
     DBG("WaveEngine Prepared");
   }
   void tick(){
-    calcDelta();
     iterateDelta();
   }
   void setFrequency(float newFreq){
     frequency = newFreq;
+    calcDelta();
     DBG("Set Frequency: "+juce::String(frequency));
   }
   PParams *params;
   float frequency = 440.0f;
-  float currentAngle = 0.0;
-  float angleDelta = 0.0;
+  double currentAngle = 0.0;
+  double angleDelta = 0.0;
 private:
   void iterateDelta(){
     currentAngle += angleDelta;
   }
   void calcDelta(){
     jassert(sampleRateCache > 0);
-    float newDelta = frequency/sampleRateCache;
+    double newDelta = (frequency/sampleRateCache);
+    DBG("NEW DELTA:");
+    DBG(newDelta);
     newDelta *= juce::MathConstants<double>::twoPi;
     angleDelta = newDelta;
   }

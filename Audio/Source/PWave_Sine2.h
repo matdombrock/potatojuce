@@ -7,7 +7,7 @@
 class PWave_Sine2 : public PWaveEngine{
 public:
   PWave_Sine2(PParams * params) : PWaveEngine(params){
-
+    params->setParam(2, 1.0f);
   }
   float getNextSample() override{
     float detune = params->getParam(0);

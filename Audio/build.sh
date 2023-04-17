@@ -7,4 +7,4 @@ else
   echo "No clean argument provided."
 fi
 
-Builds/LinuxMakefile && make
+cd Builds/LinuxMakefile/ && make

@@ -1,2 +1,2 @@
 #! /bin/bash
-.Builds/LinuxMakefile/build/PotatoJuce
+./Builds/LinuxMakefile/build/PotatoJuce
