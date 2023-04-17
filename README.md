@@ -2,11 +2,22 @@
 
 ## Setup:
 
+### Download the Image
+
+Download the Libre Computer [Raspbian Image](https://distro.libre.computer/ci/raspbian/11/2022-09-22-raspbian-bullseye-arm64%2Baml-s905x-cc.img.xz).
+
+Extract and write the image to a 16gb+ micro SD card.
+
+Follow the [Libre Computer Instructions](https://hub.libre.computer/t/raspbian-11-bullseye-for-libre-computer-boards/82) for full setup instructions.
+
+### Install Dependencies
 Before you can work with this project you will need to install the required dependencies:
 ```
-./pi-deps.sh
+cd .docs/dependencies/
+./install-deps.sh
 ```
 [Source](https://github.com/juce-framework/JUCE/blob/master/docs/Linux%20Dependencies.md)
+
 
 # Le Potato
 
