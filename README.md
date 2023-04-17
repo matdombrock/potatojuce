@@ -37,6 +37,8 @@ cd Audio
 ./build.sh
 ```
 
+*Note: If you have issues run the command as `.build.sh clean` to clean your build directory first.*
+
 ## Running Audio
 ```
 cd Audio
