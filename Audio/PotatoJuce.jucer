@@ -4,21 +4,21 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="ATolQS" name="PotatoJuce">
     <GROUP id="{1466B4DB-B2AA-E6DD-2AB2-DBE6F4CFEB94}" name="Source">
-      <FILE id="P0mRlq" name="PCLI.h" compile="0" resource="0" file="Source/PCLI.h"/>
-      <FILE id="jBQTS5" name="PWave_Demo.h" compile="0" resource="0" file="Source/PWave_Demo.h"/>
-      <FILE id="rgijnW" name="PWaveManager.h" compile="0" resource="0" file="Source/PWaveManager.h"/>
-      <FILE id="E7CWBC" name="PWave_Sine2.h" compile="0" resource="0" file="Source/PWave_Sine2.h"/>
-      <FILE id="XAn0oi" name="PWave_Sine.h" compile="0" resource="0" file="Source/PWave_Sine.h"/>
-      <FILE id="q3z9vA" name="PInterfaceSim.h" compile="0" resource="0" file="Source/PInterfaceSim.h"/>
-      <FILE id="xRcXfW" name="RALowpass1.h" compile="0" resource="0" file="Source/RALowpass1.h"/>
-      <FILE id="F54nA6" name="PWave_WhiteNoise.h" compile="0" resource="0"
-            file="Source/PWave_WhiteNoise.h"/>
-      <FILE id="oD3Kyj" name="PParams.h" compile="0" resource="0" file="Source/PParams.h"/>
-      <FILE id="JPR0fG" name="PWaveEngine.h" compile="0" resource="0" file="Source/PWaveEngine.h"/>
-      <FILE id="cH8zD1" name="PAudioProcessor.h" compile="0" resource="0"
-            file="Source/PAudioProcessor.h"/>
-      <FILE id="W23tlS" name="PSynth.h" compile="0" resource="0" file="Source/PSynth.h"/>
-      <FILE id="zlt819" name="PAudioUtils.h" compile="0" resource="0" file="Source/PAudioUtils.h"/>
+      <FILE id="MJgGjB" name="RALowpass1.h" compile="0" resource="0" file="Source/ra/RALowpass1.h"/>
+      <FILE id="FcUW1O" name="Wave_Demo.h" compile="0" resource="0" file="Source/waves/Wave_Demo.h"/>
+      <FILE id="R0O0J3" name="Wave_Sine.h" compile="0" resource="0" file="Source/waves/Wave_Sine.h"/>
+      <FILE id="ESY8ef" name="Wave_Sine2.h" compile="0" resource="0" file="Source/waves/Wave_Sine2.h"/>
+      <FILE id="isq0IC" name="Wave_WhiteNoise.h" compile="0" resource="0"
+            file="Source/waves/Wave_WhiteNoise.h"/>
+      <FILE id="P0mRlq" name="CLI.h" compile="0" resource="0" file="Source/CLI.h"/>
+      <FILE id="q3z9vA" name="InterfaceSim.h" compile="0" resource="0" file="Source/InterfaceSim.h"/>
+      <FILE id="rgijnW" name="WaveManager.h" compile="0" resource="0" file="Source/WaveManager.h"/>
+      <FILE id="oD3Kyj" name="Params.h" compile="0" resource="0" file="Source/Params.h"/>
+      <FILE id="JPR0fG" name="WaveEngine.h" compile="0" resource="0" file="Source/WaveEngine.h"/>
+      <FILE id="cH8zD1" name="AudioProcessor.h" compile="0" resource="0"
+            file="Source/AudioProcessor.h"/>
+      <FILE id="W23tlS" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
+      <FILE id="zlt819" name="AudioUtils.h" compile="0" resource="0" file="Source/AudioUtils.h"/>
       <FILE id="C2tpmO" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
   </MAINGROUP>
