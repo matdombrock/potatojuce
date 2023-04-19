@@ -1,7 +1,7 @@
 /*
   Handles the command line interface
   which doubles as an IPC layer to interpret 
-  signals from the harware interface
+  signals from the hardware interface
 */
 
 #pragma once
@@ -15,9 +15,17 @@ public:
   }
   void cliLoop(){
     DBG("Starting CLI Loop...");
+    //
+    DBG("Available commands:");
+    DBG("p[0->3] [val] - Set a param value");
+    DBG("f [val] - Set frequency");
+    DBG("a [val] - Set amplitude");
+    DBG("w [wave-name] - Set wave mode");
+    DBG("q - Exit the process");
+    //
     while (true)
     {
-      DBG("Usage: cmd val");
+      DBG("Usage: [cmd] [val]");
       std::string cmd;
       std::cin >> cmd;
       std::string valS;// A string is needed for some cmds
@@ -47,19 +55,19 @@ public:
         synth->setParam(3, val);
       }
       // Extras
+      else if(cmd == "a"){
+        synth->setAmplitude(val);
+      }
+      else if(cmd == "w"){
+        synth->setWaveEngine(valS);
+      }
       else if(cmd == "q"){
         // Quit
         return;
       }
-      else if(cmd == "a"){
-        synth->setAmplitude(val);
-      }
-      else if(cmd == "e"){
-        synth->setWaveEngine(valS);
-      }
       // Not found
       else{
-        std::cout << "Uknown cmd: " << cmd << std::endl;
+        std::cout << "Unknown cmd: " << cmd << std::endl;
       }
     }
   }
