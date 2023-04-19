@@ -20,8 +20,19 @@ public:
   {
 
   }
+  // Returns a pointer to the requested engine
   WaveEngine * getEngine(juce::String waveEngineName){
     return waveEngines[waveEngineName];
+  }
+  // Returns a pointer to the next engine in the list
+  WaveEngine * getNextEngine(){
+    // Todo: make this work
+    return &wave_demo;// Bad
+  }
+  // Returns a pointer to the previous engine in the list
+  WaveEngine * getPrevEngine(){
+    // Todo: make this work
+    return &wave_demo;// Bad
   }
   // Returns true if `waveEngineName` is a valid name
   bool hasEngine(juce::String waveEngineName){
