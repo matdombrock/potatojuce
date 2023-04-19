@@ -61,15 +61,6 @@ public:
       else{
         std::cout << "Uknown cmd: " << cmd << std::endl;
       }
-      // freq p0 p1 p2 p3
-      // DBG("Usage: freq p0 p1 p2 p3");
-      // std::cin >> frequency;// Get input from CLI
-      // synth->setAmplitude(frequency);
-      // for(int i = 0; i < 4; i++){
-      //   std::cin >> pVals[i];// Get input from CLI
-      //   juce::jmin(pVals[i], 1.0f);
-      //   synth->setParam(i,pVals[i]);
-      // }
     }
   }
 private:
