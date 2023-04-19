@@ -1,7 +1,7 @@
 # GPIO
 [Source](https://developer.technexion.com/docs/using-gpio-from-a-linux-shell)
 ## Overview
-![Board Image](../docs/libre_rips/board_img.png)
+![Board Image](libre_rips/board_img.png)
 
 - Green - GPIO (General)
 - Red - 5v
