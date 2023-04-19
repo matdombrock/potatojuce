@@ -1,5 +1,9 @@
 /*
-	The Core Synth Class
+	The base synth class which other synths will inherit
+	Actual audio sample generation is handled by the WaveEngine instance
+
+	Todo:
+	- Rename this file to `AudioEngine.h`
 */
 
 #pragma once
@@ -9,9 +13,7 @@
 #include "Params.h"
 #include "WaveEngine.h"
 #include "WaveManager.h"
-/*
-	The base synth class which other synths will inherit
-*/
+
 class Synth : public juce::AudioSource{
 public:
 	Synth() : waveManager(&params){
