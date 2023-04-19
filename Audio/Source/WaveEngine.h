@@ -1,3 +1,7 @@
+/*
+  The base class for all waves
+*/
+
 #pragma once
 #include "Params.h"
 class WaveEngine{

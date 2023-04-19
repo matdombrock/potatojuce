@@ -1,3 +1,6 @@
+/*
+  This class handles the paramater controls
+*/
 #pragma once
 #include <JuceHeader.h>
 class Params{

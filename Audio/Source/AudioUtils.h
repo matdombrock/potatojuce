@@ -1,18 +1,9 @@
 /*
-  ==============================================================================
-
-    Util.h
-    Created: 1 Apr 2023 9:24:28pm
-    Author:  mathieu
-
-  ==============================================================================
+  Audio related utility functions
 */
-
 #pragma once
 #include <JuceHeader.h>
-/*
-	Utility Functions
-*/
+
 class AudioUtils{
 public:
   // Generate a white noise sample

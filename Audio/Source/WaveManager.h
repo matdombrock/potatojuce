@@ -1,3 +1,7 @@
+/*
+  Manages a list of all available wave engines
+*/
+
 #pragma once
 #include <JuceHeader.h>
 #include "Params.h"
