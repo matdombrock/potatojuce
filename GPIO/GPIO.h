@@ -16,6 +16,7 @@
 #include <condition_variable>
 #include <queue>
 #include <unistd.h>
+#include "../Shared/Util.h"
 
 class GPIO{
 public:
@@ -55,6 +56,7 @@ public:
     int getState(){
         return state;
     }
+    // duty should be a float
     void pwm(int duty){
         if(pwmEnabled == false){
             log("Starting PWM Thread");
@@ -124,8 +126,7 @@ private:
                 // Set the duty cycle accoring to the message
                 duty = std::stoi(message);
                 // Ensure 0->100
-                duty = duty > 100 ? 100 : duty;
-                duty = duty < 0 ? 0 : duty;
+                duty = Util::bound(duty, 0, 100);
             }
             // Release the lock and continue the loop
             lock.unlock();

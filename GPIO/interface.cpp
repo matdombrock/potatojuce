@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdio.h>
 #include "LED.h"
+#include "RGBLED.h"
 #include "Rotary.h"
 int main(int argc, char **argv)
 {
