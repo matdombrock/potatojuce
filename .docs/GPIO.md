@@ -12,6 +12,8 @@
 - Blue - ADC
 - Dark - Ground
 
+**This board has about 20 GPIO pins and 2 analog pin.**
+
 ## CLI Usage
 
 ### Install `gpiod`
