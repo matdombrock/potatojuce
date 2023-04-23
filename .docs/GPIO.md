@@ -1,5 +1,8 @@
 # GPIO
 [Source](https://developer.technexion.com/docs/using-gpio-from-a-linux-shell)
+
+## [official GPIO doc](https://docs.google.com/spreadsheets/d/1U3z0Gb8HUEfCIMkvqzmhMpJfzRqjPXq7mFLC-hvbKlE/edit#gid=0) 
+
 ## Overview
 ![Board Image](libre_rips/board_img.png)
 
