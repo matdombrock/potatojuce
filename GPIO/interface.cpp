@@ -20,17 +20,19 @@ int main(int argc, char **argv)
         "gpiochip1", 93,
         "gpiochip1", 94
     );
+
     Rotary rot2(
         "gpiochip1", 91,
         "gpiochip1", 82,
         "gpiochip1", 83
     );
+    
     Rotary rot3(
         "gpiochip1", 91,
         "gpiochip1", 82,
         "gpiochip1", 83
     );
-    
+
     std::ofstream fifoOut;
     std::string fifoPathOut = "/tmp/pinp";
     fifoOut.open(fifoPathOut);
