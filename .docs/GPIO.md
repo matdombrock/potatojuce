@@ -12,7 +12,7 @@
 - Blue - ADC
 - Dark - Ground
 
-**This board has about 20 GPIO pins and 2 analog pin.**
+**This board has about 20 GPIO pins and 2 analog pins.**
 
 ## CLI Usage
 
