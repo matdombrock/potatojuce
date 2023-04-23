@@ -16,21 +16,21 @@ int main(int argc, char **argv)
     );
 
     Rotary rot(
-        "gpiochip1", 91,
+        "gpiochip1", 91,// bad
         "gpiochip1", 93,
         "gpiochip1", 94
     );
 
     Rotary rot2(
-        "gpiochip1", 91,
+        "gpiochip1", 91,// bad
         "gpiochip1", 82,
         "gpiochip1", 83
     );
-    
+
     Rotary rot3(
-        "gpiochip1", 91,
-        "gpiochip1", 82,
-        "gpiochip1", 83
+        "gpiochip1", 91,//bad
+        "gpiochip1", 84,
+        "gpiochip1", 86
     );
 
     std::ofstream fifoOut;
