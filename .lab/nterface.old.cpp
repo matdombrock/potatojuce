@@ -3,17 +3,13 @@
 #include <sstream>
 #include <stdio.h>
 #include "LED.h"
-#include "RGBLED.h"
 #include "Rotary.h"
 int main(int argc, char **argv)
 {
     std::cout << "Starting TEST" << std::endl;
     std::cout << "===========================" << std::endl;
-    RGBLED rgb(
-        "gpiochip1", 91,
-        "gpiochip1", 92,
-        "gpiochip1", 98
-    );
+    LED led("gpiochip1", 91);
+    LED led2("gpiochip1", 98);
 
     Rotary rot(
         "gpiochip1", 91,
@@ -25,12 +21,6 @@ int main(int argc, char **argv)
         "gpiochip1", 82,
         "gpiochip1", 83
     );
-    Rotary rot3(
-        "gpiochip1", 91,
-        "gpiochip1", 82,
-        "gpiochip1", 83
-    );
-    
     std::ofstream fifoOut;
     std::string fifoPathOut = "/tmp/pinp";
     fifoOut.open(fifoPathOut);
@@ -43,25 +33,28 @@ int main(int argc, char **argv)
         std::cout << "Opened output FIFO" << std::endl;
     }
 
+    int lr = 0;
     int it = 0;
     int r1 = 0;
     int r2 = 0;
-    int r3 = 0;
     while(true){
         usleep(1000);// CPU Optimization
         std::string rotRead = rot.read();
         std::string rotRead2 = rot2.read();
-        std::string rotRead3 = rot3.read();
 
         // Handle blink
+        if(std::abs(r1) == 100){
+            bool odd = it > 100;
+            led.set(odd);
+        }
+        if(std::abs(r2) == 100){
+            bool odd = it > 100;
+            led2.set(odd);
+        }
         it = it <= 200 ? it+1 : 0;
 
         // Dont continue from here if the message is empty
-        if(rotRead.size() == 0 
-            && rotRead2.size() == 0
-            && rotRead3.size() == 0
-        )
-        {
+        if(rotRead.size() == 0 && rotRead2.size() == 0){
             continue;
         }
 
@@ -75,7 +68,8 @@ int main(int argc, char **argv)
             }
         }
         // Ensure r1 is 0->100
-        r1 = Util::bound(r1, 0, 100);
+        r1 = r1 > 100 ? 100 : r1;
+        r1 = r1 < 0 ? 0 : r1;
 
         for(int i = 0; i < rotRead2.size(); i++){
             char dir = rotRead2[i];
@@ -87,24 +81,11 @@ int main(int argc, char **argv)
             }
         }
         // Ensure r2 is 0->100
-        r2 = Util::bound(r2, 0, 100);
+        r2 = r2 > 100 ? 100 : r2;
+        r2 = r2 < 0 ? 0 : r2;
 
-        for(int i = 0; i < rotRead3.size(); i++){
-            char dir = rotRead3[i];
-            if(dir == 'r'){
-                r3 += 1;
-            }
-            else{
-                r3 += -1;
-            }
-        }
-        // Ensure r3 is 0->100
-        r3 = Util::bound(r3, 0, 100);
-
-        float r = r1 / 100.0f;
-        float g = r2 / 100.0f;
-        float b = r3 / 100.0f;
-        rgb.set(r,g,b);
+        led.pwm(r1);
+        led2.pwm(r2);
 
         fifoOut << "f " << (r1 * 10) << std::endl;
         fifoOut << "p0 " << (r2 / 10.f) << std::endl;
