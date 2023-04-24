@@ -65,25 +65,38 @@ public:
             return 0;
         }
     }
+    void setLights(){
+        float r = state.r1 / 100.0f;
+        float g = state.r2 / 100.0f;
+        float b = state.r3 / 100.0f;
+        rgb.set(r,g,b);
+    }
     void startAni(){
         //
+        int sleepT = 500000;
         rgb.set(0,0,0);
-        usleep(500000);
+        usleep(sleepT);
         rgb.set(1,0,0);
-        usleep(500000);
+        usleep(sleepT);
         rgb.set(0,1,0);
-        usleep(500000);
+        usleep(sleepT);
         rgb.set(0,0,1);
-        usleep(500000);
-        rgb.set(1,0,0);
-        usleep(500000);
-        rgb.set(1,1,0);
-        usleep(500000);
-        rgb.set(1,1,1);
-        //rgb.on();
-        usleep(500000);
-        //rgb.set(0,0,0);
-        //
+        usleep(sleepT);
+        
+        rgb.on();
+        usleep(sleepT/2);
+        rgb.off();
+        usleep(sleepT/2);
+        rgb.on();
+        usleep(sleepT/2);
+        rgb.off();
+        usleep(sleepT/2);
+        rgb.on();
+        usleep(sleepT/2);
+        rgb.off();
+        usleep(sleepT/2);
+
+        rgb.set(0,0,0);
     }
     void begin(){
         while(true){
@@ -104,7 +117,8 @@ public:
                 }
                 else{
                     // Reset
-                    rgb.set(0,0,0);
+                    //rgb.set(0,0,0);
+                    setLights();
                     continue;
                 }
             }
@@ -158,10 +172,7 @@ public:
             // Ensure r3 is 0->100
             state.r3 = Util::bound(state.r3, 0, 100);
 
-            float r = state.r1 / 100.0f;
-            float g = state.r2 / 100.0f;
-            float b = state.r3 / 100.0f;
-            rgb.set(r,g,b);
+            setLights();
 
             fifoOut << "f " << (state.r1 * 10) << std::endl;
             fifoOut << "p0 " << (state.r2 / 10.f) << std::endl;

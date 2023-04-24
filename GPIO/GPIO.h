@@ -107,7 +107,7 @@ public:
     int state = 0;// Cache the pin state
     struct gpiod_chip *chip;
     struct gpiod_line *lineLED;
-    int cycleTime = 100 * 100;
+    int cycleTime = 100 * 10;// 100 * 100
     bool pwmEnabled = false;
     bool m_pwmThreadRunning = false;
     std::thread m_pwmThread;

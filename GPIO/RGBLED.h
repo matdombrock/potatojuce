@@ -50,9 +50,13 @@ public:
         gpioG.release();
     }
     void on(){
-        gpioR.on();
-        gpioG.on();
-        gpioB.on();
+        // Must use set for correct scaling
+        set(1,1,1);
+    }
+    void off(){
+        gpioR.off();
+        gpioG.off();
+        gpioB.off();
     }
     void set(float r, float g, float b){
         r = Util::bound<float>(r, 0.0f, 1.0f);
@@ -76,7 +80,7 @@ public:
         else{
             // Special scaling for red
             // This may differ for other LEDs
-            ri *= 0.5f;
+            //ri *= 0.5f;
             gpioR.pwm(ri);
         }
 
