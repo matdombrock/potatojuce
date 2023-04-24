@@ -21,19 +21,22 @@ public:
       return;
     }
     std::cout << "Device opened: " << adm.getCurrentAudioDevice()->getName() << "\n";
+    // Calls prepareToPlayOnSynth
     asp.setSource(&synth);
     adm.addAudioCallback(&asp);
 
     DBG("AudioProcessor Prepared");
   }
 
-  void mainLoop(){
-    prepareToPlay();
+  void setupSynth(){
     // Setup the synth
     synth.setWaveEngine("demo");
     float frequency = 440.0f;
     synth.setFrequency(frequency);
     synth.setAmplitude(0.75f);
+  }
+
+  void mainLoop(){
     // Runs with CLI input
     CLI cli(&synth);
     cli.cliLoop();
