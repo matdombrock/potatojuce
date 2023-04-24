@@ -48,6 +48,12 @@ public:
         gpiod_line_set_value(lineLED, val);
         state = val;
     }
+    void on(){
+        set(1);
+    }
+    void off(){
+        set(0);
+    }
     virtual bool get(){
         bool val = gpiod_line_get_value(lineLED);
         state = val;

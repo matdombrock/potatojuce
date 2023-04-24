@@ -5,111 +5,183 @@
 #include "LED.h"
 #include "RGBLED.h"
 #include "Rotary.h"
-int main(int argc, char **argv)
-{
-    std::cout << "Starting TEST" << std::endl;
-    std::cout << "===========================" << std::endl;
-    RGBLED rgb(
-        "gpiochip1", 91,
-        "gpiochip1", 92,
-        "gpiochip1", 98
-    );
+#include "Button.h"
 
-    Rotary rot(
-        "gpiochip1", 91,// bad
-        "gpiochip1", 93,
-        "gpiochip1", 94
-    );
+class State{
+public:
+    State(){
 
-    Rotary rot2(
-        "gpiochip1", 91,// bad
-        "gpiochip1", 82,
-        "gpiochip1", 83
-    );
-
-    Rotary rot3(
-        "gpiochip1", 91,//bad
-        "gpiochip1", 84,
-        "gpiochip1", 86
-    );
-
-    std::ofstream fifoOut;
-    std::string fifoPathOut = "/tmp/pinp";
-    fifoOut.open(fifoPathOut);
-    std::cout << "Waiting on fifo..." << std::endl;
-    if (!fifoOut.is_open()) {
-        std::cerr << "Failed to open output FIFO: "+fifoPathOut << std::endl;
-        return 1;
     }
-    else{
-        std::cout << "Opened output FIFO" << std::endl;
+    void iterate(){
+        it = it <= 200 ? it+1 : 0;
     }
-
-    int it = 0;
+    bool utilMode = false;
+    bool it = 0;
     int r1 = 0;
     int r2 = 0;
     int r3 = 0;
-    while(true){
-        usleep(1000);// CPU Optimization
-        std::string rotRead = rot.read();
-        std::string rotRead2 = rot2.read();
-        std::string rotRead3 = rot3.read();
+};
 
-        // Handle blink
-        it = it <= 200 ? it+1 : 0;
-
-        // Dont continue from here if the message is empty
-        if(rotRead.size() == 0 
-            && rotRead2.size() == 0
-            && rotRead3.size() == 0
-        )
-        {
-            continue;
-        }
-
-        for(int i = 0; i < rotRead.size(); i++){
-            char dir = rotRead[i];
-            if(dir == 'r'){
-                r1 += 1;
-            }
-            else{
-                r1 += -1;
-            }
-        }
-        // Ensure r1 is 0->100
-        r1 = Util::bound(r1, 0, 100);
-
-        for(int i = 0; i < rotRead2.size(); i++){
-            char dir = rotRead2[i];
-            if(dir == 'r'){
-                r2 += 1;
-            }
-            else{
-                r2 += -1;
-            }
-        }
-        // Ensure r2 is 0->100
-        r2 = Util::bound(r2, 0, 100);
-
-        for(int i = 0; i < rotRead3.size(); i++){
-            char dir = rotRead3[i];
-            if(dir == 'r'){
-                r3 += 1;
-            }
-            else{
-                r3 += -1;
-            }
-        }
-        // Ensure r3 is 0->100
-        r3 = Util::bound(r3, 0, 100);
-
-        float r = r1 / 100.0f;
-        float g = r2 / 100.0f;
-        float b = r3 / 100.0f;
-        rgb.set(r,g,b);
-
-        fifoOut << "f " << (r1 * 10) << std::endl;
-        fifoOut << "p0 " << (r2 / 10.f) << std::endl;
+class Interface{
+public:
+    Interface()
+    :
+    rgb(
+        "gpiochip1", 91,
+        "gpiochip1", 98,
+        "gpiochip1", 92
+    ),
+    btn("gpiochip1", 79),
+    rot1(
+        "gpiochip1", 91,//bad
+        "gpiochip1", 84,
+        "gpiochip1", 86
+    ),
+    rot2(
+        "gpiochip1", 91,// bad
+        "gpiochip1", 82,
+        "gpiochip1", 83
+    ),
+    rot3(
+        "gpiochip1", 91,// bad
+        "gpiochip1", 93,
+        "gpiochip1", 94
+    )
+    {
+        btn.setToggleMode();
+        startAni();
+        initFifo();
     }
+    int initFifo(){
+        std::string fifoPathOut = "/tmp/pinp";
+        fifoOut.open(fifoPathOut);
+        std::cout << "Waiting on fifo..." << std::endl;
+        if (!fifoOut.is_open()) {
+            std::cerr << "Failed to open output FIFO: "+fifoPathOut << std::endl;
+            return 1;
+        }
+        else{
+            std::cout << "Opened output FIFO" << std::endl;
+            return 0;
+        }
+    }
+    void startAni(){
+        //
+        rgb.set(0,0,0);
+        usleep(500000);
+        rgb.set(1,0,0);
+        usleep(500000);
+        rgb.set(0,1,0);
+        usleep(500000);
+        rgb.set(0,0,1);
+        usleep(500000);
+        rgb.set(1,0,0);
+        usleep(500000);
+        rgb.set(1,1,0);
+        usleep(500000);
+        rgb.set(1,1,1);
+        //rgb.on();
+        usleep(500000);
+        //rgb.set(0,0,0);
+        //
+    }
+    void begin(){
+        while(true){
+            usleep(1000);// CPU Optimization
+            std::string rotRead1 = rot1.read();
+            std::string rotRead2 = rot2.read();
+            std::string rotRead3 = rot3.read();
+            
+            if(btn.changed()){
+                Util::echo("Mode changed!");
+                bool val = btn.getToggled();
+                state.utilMode = val;
+                //std::string valS = val ? "on" : "off";
+                //Util::echo(valS);
+                if(state.utilMode){
+                    rgb.set(1,1,1);
+                    continue;
+                }
+                else{
+                    // Reset
+                    rgb.set(0,0,0);
+                    continue;
+                }
+            }
+            
+
+            // Handle blink
+            state.iterate();
+
+            // Dont continue from here if the message is empty
+            if(rotRead1.size() == 0 
+                && rotRead2.size() == 0
+                && rotRead3.size() == 0
+            )
+            {
+                continue;
+            }
+
+            for(int i = 0; i < rotRead1.size(); i++){
+                char dir = rotRead1[i];
+                if(dir == 'r'){
+                    state.r1 += 1;
+                }
+                else{
+                    state.r1 += -1;
+                }
+            }
+            // Ensure r1 is 0->100
+            state.r1 = Util::bound(state.r1, 0, 100);
+
+            for(int i = 0; i < rotRead2.size(); i++){
+                char dir = rotRead2[i];
+                if(dir == 'r'){
+                    state.r2 += 1;
+                }
+                else{
+                    state.r2 += -1;
+                }
+            }
+            // Ensure r2 is 0->100
+            state.r2 = Util::bound(state.r2, 0, 100);
+
+            for(int i = 0; i < rotRead3.size(); i++){
+                char dir = rotRead3[i];
+                if(dir == 'r'){
+                    state.r3 += 1;
+                }
+                else{
+                    state.r3 += -1;
+                }
+            }
+            // Ensure r3 is 0->100
+            state.r3 = Util::bound(state.r3, 0, 100);
+
+            float r = state.r1 / 100.0f;
+            float g = state.r2 / 100.0f;
+            float b = state.r3 / 100.0f;
+            rgb.set(r,g,b);
+
+            fifoOut << "f " << (state.r1 * 10) << std::endl;
+            fifoOut << "p0 " << (state.r2 / 10.f) << std::endl;
+            fifoOut << "p1 " << (state.r3 / 10.f) << std::endl;
+        }
+    }
+    
+private:
+    RGBLED rgb;
+    Button btn;
+    Rotary rot1;
+    Rotary rot2;
+    Rotary rot3;
+    std::ofstream fifoOut;
+    State state;
+};
+
+int main(int argc, char **argv)
+{
+    Interface interface;
+    interface.begin();
     return 0;
 }
