@@ -6,6 +6,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include <unistd.h> // sleep
 #include "Synth.h"
 
 class CLI{
@@ -55,6 +56,19 @@ public:
         synth->setParam(3, val);
       }
       // Extras
+      else if(cmd == "hax"){
+        // Play a little song
+        // blocking
+        for(int i = 0; i < 32; i++){
+          synth->setFrequency(880);
+          usleep(500000/i);
+          synth->setFrequency(440);
+          usleep(500000/i);
+          synth->setFrequency(666);
+          usleep(500000/i);
+        }
+        synth->setFrequency(440);
+      }
       else if(cmd == "a"){
         synth->setAmplitude(val);
       }
