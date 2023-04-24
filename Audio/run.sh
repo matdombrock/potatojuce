@@ -1,2 +1,5 @@
 #! /bin/bash
-./Builds/LinuxMakefile/build/PotatoJuce
+rm /tmp/pinp
+mkfifo /tmp/pinp || exit 1
+
+cat /tmp/pinp | ./Builds/LinuxMakefile/build/PotatoJuce

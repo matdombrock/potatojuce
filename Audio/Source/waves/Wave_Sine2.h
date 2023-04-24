@@ -12,7 +12,8 @@ public:
   float getNextSample() override{
     float detune = params->getParam(0);
     detune = detune <= 0 ? 0.0001 : detune;// Ensure we are not zero
-    detune *= 6.24;//2pi
+    detune += 1;
+    //detune *= 6.24;//2pi
     
     float noiseLvl = params->getParam(1);
     noiseLvl /= 32;// Only a small amount

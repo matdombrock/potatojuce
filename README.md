@@ -76,6 +76,10 @@ This pipe must be created manually in order for the IPC to start working.
 To run the synth code with "IPC enabled" do:
 ```
 cd Audio
+# clear
+rm /tmp/pinp
+mkfifo /tmp/pinp
+# run
 cat /tmp/pinp | ./run.sh
 ```
 

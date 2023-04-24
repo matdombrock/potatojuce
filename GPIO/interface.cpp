@@ -175,8 +175,8 @@ public:
             setLights();
 
             fifoOut << "f " << (state.r1 * 10) << std::endl;
-            fifoOut << "p0 " << (state.r2 / 10.f) << std::endl;
-            fifoOut << "p1 " << (state.r3 / 10.f) << std::endl;
+            fifoOut << "p0 " << (state.r2 / 100.f) << std::endl;
+            fifoOut << "p1 " << (state.r3 / 100.f) << std::endl;
         }
     }
     
