@@ -26,7 +26,6 @@ public:
   void setFrequency(float newFreq){
     frequency = newFreq;
     calcDelta();
-    DBG("Set Frequency: "+juce::String(frequency));
   }
   Params *params;
   float frequency = 440.0f;
@@ -39,8 +38,6 @@ private:
   void calcDelta(){
     jassert(sampleRateCache > 0);
     double newDelta = (frequency/sampleRateCache);
-    DBG("NEW DELTA:");
-    DBG(newDelta);
     newDelta *= juce::MathConstants<double>::twoPi;
     angleDelta = newDelta;
   }

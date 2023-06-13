@@ -5,7 +5,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Synth.h"
-#include "CLI.h"
+#include "IPC.h"
 
 class AudioProcessor{
 public:
@@ -38,8 +38,8 @@ public:
 
   void mainLoop(){
     // Runs with CLI input
-    CLI cli(&synth);
-    cli.cliLoop();
+    IPC ipc(&synth);
+    ipc.ipcWatcher();
     std::cout << "Closing device...\n";
   }
 
