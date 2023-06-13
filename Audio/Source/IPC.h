@@ -38,8 +38,9 @@ public:
     while (true)
     {
       std::cin >> cmd;
-      
+     // DBG("Got cmd: "+cmd);
       if(cmd == "f"){
+        //DBG("Freq");
         std::cin >> val;
         synth->setFrequency(val);
       }

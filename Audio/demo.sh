@@ -1,10 +1,11 @@
 #!/bin/bash
 
-for i in {200..1000}
+for i in {200..410}
 do
-  echo "f $i" >> /tmp/pj/in
-  echo "$i"
-  sleep 0.01
+  v=$(($i*10))
+  echo -e "f $v\n" >>/tmp/pj/in &
+  echo "$v"
+  sleep 1
 done
 
 echo "Done playing demo."
