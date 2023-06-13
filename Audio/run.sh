@@ -1,5 +1,5 @@
 #! /bin/bash
-rm /tmp/pinp
-mkfifo /tmp/pinp || exit 1
+rm /tmp/pj/in
+mkfifo /tmp/pj/in || exit 1
 
-cat /tmp/pinp | ./Builds/LinuxMakefile/build/PotatoJuce
+cat /tmp/pj/in | ./Builds/LinuxMakefile/build/PotatoJuce

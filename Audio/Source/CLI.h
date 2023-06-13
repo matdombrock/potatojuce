@@ -5,14 +5,22 @@
 */
 
 #pragma once
+#include <iostream>
+#include <fstream>
 #include <JuceHeader.h>
 #include <unistd.h> // sleep
 #include "Synth.h"
 
+// this should really be called IPC
 class CLI{
 public:
   CLI(Synth * pSynth){
     synth = pSynth;
+    std::ofstream file;
+    file.open ("/tmp/pj/waveEngines.txt");
+    file << synth->listWaveEngines();
+    DBG("Wrote wave engines to /tmp/pj/waveEngines.txt");
+    file.close();
   }
   void cliLoop(){
     DBG("Starting CLI Loop...");
@@ -23,7 +31,8 @@ public:
     DBG("a [val] - Set amplitude");
     DBG("w [wave-name] - Set wave mode");
     DBG("q - Exit the process");
-    DBG("Write Commands to /tmp/pinp");
+    DBG("-------");
+    DBG("Write Commands to /tmp/pj/in");
     //
     while (true)
     {
