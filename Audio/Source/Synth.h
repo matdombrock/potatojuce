@@ -36,7 +36,7 @@ public:
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override
 	{
 		DBG("Prepared Synth");
-		DBG("Sample Rate: ("+juce::String(sampleRate)+")");
+		//DBG("Sample Rate: ("+std::string(sampleRate)+")");
 		sampleRateCache = sampleRate;
 		waveEngine->prepareToPlay(sampleRate);
 	}
@@ -47,7 +47,7 @@ public:
 	/*
 		Custom methods
 	*/	
-	void setWaveEngine(juce::String newWaveEngineName){
+	void setWaveEngine(std::string newWaveEngineName){
 		if(waveManager.hasEngine(newWaveEngineName)){
 			waveEngine = waveManager.getEngine(newWaveEngineName);
 			waveEngine->prepareToPlay(sampleRateCache);
@@ -56,6 +56,9 @@ public:
 		else{
 			std::cout << "Can't find wave engine!\n";
 		}
+	}
+	std::string listWaveEngines(){
+		return waveManager.getWaveEngines();
 	}
 	// Wrapper for params.setParam()
 	void setParam(int index, float value){
@@ -72,7 +75,7 @@ private:
 	double sampleRateCache = 0;
 	float amplitude = 0.5;
 	Params params;
-	juce::String waveEngineName = "default";
+	std::string waveEngineName = "default";
 	WaveEngine * waveEngine;
 	WaveManager waveManager;
 };

@@ -23,36 +23,36 @@ public:
     DBG("a [val] - Set amplitude");
     DBG("w [wave-name] - Set wave mode");
     DBG("q - Exit the process");
+    DBG("Write Commands to /tmp/pinp");
     //
     while (true)
     {
       DBG("Usage: [cmd] [val]");
       std::string cmd;
       std::cin >> cmd;
+      DBG("Got CMD: "+cmd);
       std::string valS;// A string is needed for some cmds
-      std::cin >> valS;
+      
       float val;
-      try{
-        val = std::stof(valS);
-      }
-      catch (const std::invalid_argument& e) {
-        //std::cout << "Error: " << e.what() << std::endl;
-        val = 0;
-      }
       
       if(cmd == "f"){
+        std::cin >> val;
         synth->setFrequency(val);
       }
       else if(cmd == "p0"){
+        std::cin >> val;
         synth->setParam(0, val);
       }
       else if(cmd == "p1"){
+        std::cin >> val;
         synth->setParam(1, val);
       }
       else if(cmd == "p2"){
+        std::cin >> val;
         synth->setParam(2, val);
       }
       else if(cmd == "p3"){
+        std::cin >> val;
         synth->setParam(3, val);
       }
       // Extras
@@ -70,10 +70,16 @@ public:
         synth->setFrequency(440);
       }
       else if(cmd == "a"){
+        std::cin >> val;
         synth->setAmplitude(val);
       }
       else if(cmd == "w"){
+        std::cin >> valS;
         synth->setWaveEngine(valS);
+      }
+      else if(cmd == "wg"){
+        DBG("Wave Engines:");
+        DBG(synth->listWaveEngines());
       }
       else if(cmd == "q"){
         // Quit

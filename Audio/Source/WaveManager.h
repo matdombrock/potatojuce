@@ -21,7 +21,7 @@ public:
 
   }
   // Returns a pointer to the requested engine
-  WaveEngine * getEngine(juce::String waveEngineName){
+  WaveEngine * getEngine(std::string waveEngineName){
     return waveEngines[waveEngineName];
   }
   // Returns a pointer to the next engine in the list
@@ -34,8 +34,16 @@ public:
     // Todo: make this work
     return &wave_demo;// Bad
   }
+  std::string getWaveEngines(){
+    std::string out;
+    for(auto i : waveEngines){
+      out += i.first + "\n";
+    }
+    return out;
+  }
+  
   // Returns true if `waveEngineName` is a valid name
-  bool hasEngine(juce::String waveEngineName){
+  bool hasEngine(std::string waveEngineName){
     if(waveEngines.find(waveEngineName) != waveEngines.end()){
       return true;
     }
@@ -46,7 +54,7 @@ private:
   Wave_Sine wave_sine;
   Wave_Sine2 wave_sine2;
   Wave_Demo wave_demo;
-  std::map<juce::String, WaveEngine*> waveEngines = {
+  std::map<std::string, WaveEngine*> waveEngines = {
 		{"default", &wave_whiteNoise},
 		{"noise", &wave_whiteNoise},
 		{"sine", &wave_sine},
