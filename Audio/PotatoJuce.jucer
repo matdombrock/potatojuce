@@ -10,7 +10,6 @@
       <FILE id="ESY8ef" name="Wave_Sine2.h" compile="0" resource="0" file="Source/waves/Wave_Sine2.h"/>
       <FILE id="isq0IC" name="Wave_WhiteNoise.h" compile="0" resource="0"
             file="Source/waves/Wave_WhiteNoise.h"/>
-      <FILE id="P0mRlq" name="CLI.h" compile="0" resource="0" file="Source/CLI.h"/>
       <FILE id="q3z9vA" name="InterfaceSim.h" compile="0" resource="0" file="Source/InterfaceSim.h"/>
       <FILE id="rgijnW" name="WaveManager.h" compile="0" resource="0" file="Source/WaveManager.h"/>
       <FILE id="oD3Kyj" name="Params.h" compile="0" resource="0" file="Source/Params.h"/>
@@ -21,6 +20,7 @@
       <FILE id="zlt819" name="AudioUtils.h" compile="0" resource="0" file="Source/AudioUtils.h"/>
       <FILE id="C2tpmO" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
+    <FILE id="uQIqO8" name="IPC.h" compile="0" resource="0" file="Source/IPC.h"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>

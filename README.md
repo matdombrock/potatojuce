@@ -27,8 +27,6 @@ It costs about 1/3rd of what a Raspberry Pi does while coming with 2GB of memory
 
 [Internal Le Potato Docs](.docs/le-potato.md)
 
-## Juce Lib Included?
-This is because its not easy to get Projucer running on ARM and its easier to do it this way than to to depend on Projucer to setup the project correctly. 
 
 ## Project Layout
 Generally speaking, the actual project code is split into two main directories/sub-projects. 
