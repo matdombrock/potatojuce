@@ -16,6 +16,9 @@ public:
   float getParam(int index){
     return params[index];
   }
+  float[] getParams(){
+    return params;
+  }
 private:
   float params[4] = {0,0,0,0};
 };

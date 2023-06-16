@@ -25,10 +25,7 @@ class IPC{
 public:
   IPC(Synth * pSynth){
     synth = pSynth;
-    std::ofstream file;
-    file.open ("/tmp/pj/waveEngines.txt");
-    file << synth->listWaveEngines();
-    file.close();
+    writeWaveEnginesList();
   }
   void ipcWatcher(){
     DBG("Watching at /tmp/pj/in");
@@ -79,6 +76,12 @@ public:
     }
   }
 private:
+  void writeWaveEnginesList(){
+    std::ofstream file;
+    file.open ("/tmp/pj/waveEngines.txt");
+    file << synth->listWaveEngines();
+    file.close();
+  }
   Synth * synth;
   float frequency = 440.0f;
   float pVals[4];
